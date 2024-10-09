@@ -1,4 +1,54 @@
-# CodeIgniter 4 Framework
+<p align="center">
+  <h2 align="center">
+    MONITORING DATA SDG (Sustainable Development Goals)
+  </h2>
+</p>
+
+<!-- Daftar Isi -->
+<details open="open">
+  <summary><h2 style="display: inline-block">Daftar Isi</h2></summary>
+  <ol>
+    <li><a href="#anggota-tim">Anggota Tim</a></li>
+    <li><a href="#latar-belakang">Latar Belakang</a></li>
+    <li><a href="#tujuan-dan-manfaat">Tujuan dan Manfaat</a></li>
+    <li><a href="#penjelasan-aplikasi">Penjelasan Aplikasi</a></li>
+    <li><a href="#rencana-pengerjaan-proyek">Rencana Pengerjaan Proyek</a></li>
+  </ol>
+</details>
+
+## Anggota Tim
+| NIM           | Name                     |
+| ------------- |--------------------------|
+| 2210512043    | Ahmad Maulana Yassin     |
+| 2210512083    | Zaki Mahmuda             |
+
+<!-- Latar Belakang -->
+## Latar Belakang
+
+<!-- Tujuan dan Manfaat -->
+## Tujuan dan Manfaat
+
+<!-- Penjelasan Aplikasi -->
+## Penjelasan Aplikasi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- # CodeIgniter 4 Framework
 
 ## What is CodeIgniter?
 
@@ -57,4 +107,4 @@ Additionally, make sure that the following extensions are enabled in your PHP:
 
 - json (enabled by default - don't turn it off)
 - [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library -->
