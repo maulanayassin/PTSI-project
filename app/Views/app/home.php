@@ -15,7 +15,7 @@ Home Page
                 <!-- SDG Introduction Section -->
                 
                 <!-- Embed iframe -->
-                <div class="col-md-6" style="height: 500px;">
+                <div class="col-md-12" style="height: 600px;">
                     <iframe width="770" height="580" scrolling="no" 
                         src="https://v3.polymersearch.com/b/67035c3429b08d000849277c?m=embed&b=470e7222-e039-44cf-b0d0-3c0df5d28345&f=1&c=1"
                         style="overflow:hidden;height:100%;width:100%;position:relative;">
@@ -25,6 +25,18 @@ Home Page
                     <iframe width="770" height="580" scrolling="no" 
                         src="https://v3.polymersearch.com/b/67035c3429b08d000849277c?m=embed&b=06823448-f1b2-409a-a053-8810e1e6347b&f=1&c=1"
                         style="overflow:hidden;height:100%;width:100%;position:relative;">
+                    </iframe>
+                </div>
+                <div class="col-md-6" style="height: 500px;">
+                    <iframe width="770" height="580" scrolling="no" 
+                        src="https://v3.polymersearch.com/b/67035c3429b08d000849277c?m=embed&b=342178ee-b329-4539-9637-e3468ac5766e&f=1&c=1" 
+                        style="overflow:hidden;height:100%;width:100%;position:relative;">
+                    </iframe>
+                </div>
+                <div class="col-md-12" style="height:600px;">
+                    <iframe width="770" height="580" scrolling="no" 
+                        src="https://v3.polymersearch.com/b/67035c3429b08d000849277c?m=embed&b=02f2f448-7899-4cf4-b4ce-36b4511f4e02&f=1&c=1" 
+                        style="overflow:hidden;height:100%;width:100%;position:relative;" >
                     </iframe>
                 </div>
                 <!-- <div class="col-md-4">
