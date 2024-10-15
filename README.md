@@ -56,3 +56,48 @@ Buka terminal atau command prompt dan jalankan perintah berikut untuk clone repo
 
 ```bash
 git clone https://github.com/maulanayassin/PTSI-project.git
+cd PTSI-project
+```
+
+#### 2. Install Dependensi Menggunakan Composer
+Setelah masuk ke dalam folder project, jalankan perintah berikut untuk menginstal semua dependensi yang diperlukan:
+```bash
+composer install
+```
+3. Konfigurasi Database
+Buat database baru di MySQL/MariaDB dengan nama yang sesuai, misalnya sdg_ptsi.
+Salin file .env.example yang ada di folder project dan ubah namanya menjadi .env.
+Buka file .env dan sesuaikan pengaturan database dengan informasi database yang telah Anda buat. Contoh konfigurasi yang dapat digunakan:
+plaintext
+Copy code
+database.default.hostname = localhost
+database.default.database = sdg_ptsi
+database.default.username = your_username
+database.default.password = your_password
+database.default.DBDriver = MySQLi
+4. Migrasi Database
+Jalankan perintah berikut untuk melakukan migrasi dan membuat tabel-tabel yang diperlukan di dalam database:
+
+```bash
+php spark migrate
+```
+Jika Anda ingin mengisi database dengan data awal, Anda dapat menggunakan seeder:
+
+```bash
+php spark db:seed SeederName
+```
+Gantilah SeederName dengan nama seeder yang sesuai jika Anda memiliki seeder.
+
+5. Menjalankan Server
+Setelah semua langkah di atas selesai, Anda bisa menjalankan aplikasi dengan perintah berikut:
+
+```bash
+php spark serve
+```
+Aplikasi akan berjalan di alamat http://localhost:8080. Anda dapat membuka URL ini di browser untuk mengakses aplikasi Monitoring SDG.
+
+6. Login ke Aplikasi
+Gunakan kredensial yang sudah Anda buat atau gunakan akun admin default jika tersedia untuk masuk ke dalam aplikasi. Setelah login, Anda akan diarahkan ke dashboard aplikasi di mana Anda dapat mulai menggunakan fitur-fitur yang ada.
+
+7. Memastikan Fitur Berjalan
+Setelah aplikasi berjalan, pastikan semua fitur, seperti dashboard, manajemen indikator, dan filter berdasarkan wilayah berfungsi dengan baik. Jika ada masalah, periksa kembali langkah-langkah instalasi dan konfigurasi yang telah dilakukan.
