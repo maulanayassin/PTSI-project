@@ -23,7 +23,7 @@ province
                 <label class="form-label">Kode Kemendagri</label>
                 <input type="text" name="kemendagri_code" id="kemendagri_code" class="form-control" maxlength="100"  value="<?= ($record_province !== null ? $record_province->kemendagri_code : "") ?>">
             </div>
-        </div>
+        </div> 
     </div>
     <div class="card-footer d-flex justify-content-end">
         <button type="submit" class="btn btn-pill btn-primary">Simpan</button>

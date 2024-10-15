@@ -12,7 +12,7 @@
     <li><a href="#latar-belakang">Latar Belakang</a></li>
     <li><a href="#tujuan-dan-manfaat">Tujuan dan Manfaat</a></li>
     <li><a href="#penjelasan-aplikasi">Penjelasan Aplikasi</a></li>
-    <li><a href="#rencana-pengerjaan-proyek">Rencana Pengerjaan Proyek</a></li>
+    <li><a href="#petunjuk-instalasi-project-ci-monitoring-sdg">Petunjuk Instalasi</a></li> 
   </ol>
 </details>
 
@@ -24,87 +24,35 @@
 
 <!-- Latar Belakang -->
 ## Latar Belakang
+Project Monitoring SDG (Sustainable Development Goals) adalah aplikasi berbasis web yang bertujuan untuk memantau dan menganalisis indikator-indikator SDG di suatu wilayah. Aplikasi ini dibangun menggunakan framework CodeIgniter 4 dan menyediakan antarmuka untuk menampilkan data, melakukan pengelolaan, serta menampilkan visualisasi indikator SDG.
 
 <!-- Tujuan dan Manfaat -->
 ## Tujuan dan Manfaat
 
+
 <!-- Penjelasan Aplikasi -->
 ## Penjelasan Aplikasi
 
+Aplikasi **Monitoring SDG** memiliki beberapa fitur utama, antara lain:
+1. **Dashboard Data SDG**: Menampilkan visualisasi indikator SDG dalam bentuk grafik dan tabel.
+2. **Manajemen Indikator SDG**: Memungkinkan penambahan, pengeditan, dan penghapusan indikator SDG.
+3. **Manajemen Pengguna**: Admin dapat mengelola pengguna yang memiliki akses ke sistem.
+4. **Filter Berdasarkan Wilayah**: Pengguna dapat memfilter data berdasarkan wilayah atau provinsi.
 
+<!-- Petunjuk Instalasi Project CI Monitoring SDG -->
+## Petunjuk Instalasi Project CI Monitoring SDG
+### Prasyarat
+Sebelum memulai instalasi, pastikan Anda sudah menginstal:
+- **PHP** versi 7.3 atau lebih baru.
+- **Composer** (untuk mengelola dependensi PHP).
+- **MySQL/MariaDB** untuk database.
+- **Git** untuk meng-clone project dari GitHub.
+- **Server lokal** seperti **XAMPP** atau **Laragon** jika bekerja di lingkungan lokal.
 
+### Langkah-Langkah Instalasi
 
+#### 1. Clone Repository dari GitHub
+Buka terminal atau command prompt dan jalankan perintah berikut untuk clone repository ke folder lokal Anda:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- # CodeIgniter 4 Framework
-
-## What is CodeIgniter?
-
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
-
-This repository holds the distributable version of the framework.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
-
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
-
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
-
-## Important Change with index.php
-
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
-
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
-
-**Please** read the user guide for a better explanation of how CI4 works!
-
-## Repository Management
-
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
-
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
-
-## Contributing
-
-We welcome contributions from the community.
-
-Please read the [*Contributing to CodeIgniter*](https://github.com/codeigniter4/CodeIgniter4/blob/develop/CONTRIBUTING.md) section in the development repository.
-
-## Server Requirements
-
-PHP version 8.1 or higher is required, with the following extensions installed:
-
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
-
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
-
-Additionally, make sure that the following extensions are enabled in your PHP:
-
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library -->
+```bash
+git clone https://github.com/maulanayassin/PTSI-project.git

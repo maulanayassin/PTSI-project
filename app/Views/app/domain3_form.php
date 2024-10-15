@@ -19,7 +19,7 @@ Domain 3
             <div class="mb-3">
                 <label class="form-label">No. Indikator</label>
                 <input type="text" name="domain3_no" id="no_indicator" class="form-control" maxlength="100"  value="<?= ($record_domain3 !== null ? $record_domain3->no_indicator : "") ?>">
-            </div>
+            </div> 
             <div class="mb-3">
                 <label class="form-label">Nama Indikator</label>
                 <input type="text" name="domain3_name" id="indicator_name" class="form-control" maxlength="100"  value="<?= ($record_domain3 !== null ? $record_domain3->indicator_name : "") ?>">

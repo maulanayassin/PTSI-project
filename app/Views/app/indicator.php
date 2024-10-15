@@ -9,6 +9,16 @@ Indikator
 <div class="card">
     <div class="card-header">
         <div class="card-actions">
+            <div class="dropdown d-inline-block">
+                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    Pilih Domain
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="<?= site_url('app/domain1') ?>">Domain 1</a>
+                    <a class="dropdown-item" href="<?= site_url('app/domain2') ?>">Domain 2</a>    
+                    <a class="dropdown-item" href="<?= site_url('app/domain3') ?>">Domain 3</a>
+                </div>
+            </div>
             <a href="<?= site_url('/app/indicator/form') ?>" class="btn btn-pill">Tambah</a>
         </div>
     </div>
