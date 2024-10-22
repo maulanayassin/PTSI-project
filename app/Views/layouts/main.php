@@ -46,8 +46,8 @@
           </button>
           <div class="flex gap-[27px] items-center">
             <!-- <img src="https://isim.ptsi.co.id/images/logo-i-sim.png" alt="I-SIM" class="h-[34px] w-auto"> -->
-            <img src="https://isim.ptsi.co.id/images/logo-id-survey.png" alt="ID Survey">
-            <img src="https://isim.ptsi.co.id/images/logo-surveyor-indonesia.png" alt="Surveyor Indonesia">
+            <img src="<?= base_url('dist/img/logo_id_survey.png') ?>"alt="ID Survey" width="110" height="32"> 
+            <img src="<?= base_url('dist/img/logo_ptsi.png') ?>" alt="Surveyor Indonesia" width="40" height="32">
           </div>
           <!-- <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3"> -->
             <!-- <a href=".">

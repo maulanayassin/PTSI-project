@@ -49,7 +49,7 @@ class ProvinceModel extends Model
 {
     protected $table = 'province'; // Change this to your cities table name
     protected $primaryKey = 'id';
-    protected $allowedFields = ['id', 'province_name'];
+    protected $allowedFields = ['id', 'province_name', 'kemendagri_code'];
     public function getProvince()
     {
         return $this->findAll();  // Mengambil semua data dari tabel

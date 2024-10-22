@@ -26,6 +26,10 @@ $routes->group('app', ['filter' => 'auth'], function($routes) {
     $routes->get('indicator', 'App\Indicator::index');
     $routes->get('indicator/form', 'App\Indicator::form');
     $routes->get('indicator/edit/(:num)', 'App\Indicator::edit/$1');
+    // $routes->get('indicator/getCityByProvince/(:num)', 'App\Indicator::getCityByProvince/$1');
+    // $routes->get('indicator/getTransactionByCity/', 'App\Indicator::getTransactionByCity');
+    $routes->post('indicator/selectProvince/', 'App\Indicator::selectProvince');
+    $routes->post('indicator/selectCity/', 'App\Indicator::selectCity');
     $routes->post('indicator/delete/(:num)', 'App\Indicator::delete/$1');
     $routes->post('indicator/submit', 'App\Indicator::submit');
     $routes->get('admin/users', 'Admin\Users::index');

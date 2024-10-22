@@ -32,10 +32,10 @@ Indikator
                 <label class="form-label">Polaritas</label>
                 <input type="text" name="polaritas" id="polaritas" class="form-control" maxlength="100"  value="<?= ($record_indicator !== null ? $record_indicator->polaritas : "") ?>">
             </div>
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label class="form-label">Tahun</label>
                 <input type="text" name="tahun" id="tahun" class="form-control" maxlength="100"  value="<?= ($record_indicator !== null ? $record_indicator->tahun : "") ?>">
-            </div>
+            </div> -->
             <div class="mb-3">
                 <label class="form-label">Sumber</label>
                 <input type="text" name="sumber" id="sumber" class="form-control" maxlength="100"  value="<?= ($record_indicator !== null ? $record_indicator->sumber : "") ?>">
