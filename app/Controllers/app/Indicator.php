@@ -3,7 +3,6 @@ namespace App\Controllers\App;
 
 use App\Models\IndicatorModel;
 use App\Models\CityModel;
-use App\Models\TransactionModel;
 use App\Models\ProvinceModel;
 use CodeIgniter\Controller;
 
@@ -137,12 +136,19 @@ class Indicator extends Controller
 
     public function selectCity()
     {
-        // Proses pilihan kota
+        
+        // Mendapatkan city_id dari form yang di-submit
         $cityId = $this->request->getPost('city_id');
-        // Simpan atau proses city_id sesuai kebutuhan
-
-        // Redirect atau tampilkan halaman berikutnya
-        return view('app/transaction');  // Sesuaikan dengan logika Anda
+        echo($cityId);
+        // Periksa apakah city_id dikirim dan valid
+        if (!empty($cityId)) {
+            // Menyimpan city_id ke dalam session
+            session()->set('selectedCityId', $cityId);
+        } else {
+            // Jika city_id tidak valid atau kosong, hapus session
+            session()->remove('selectedCityId');
+        }
+        return view('/app/transaction');
     }
 
 }

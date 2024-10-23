@@ -78,3 +78,4 @@ class Domain2 extends Controller
         return redirect()->to('/app/domain2')->with('success', 'Data berhasil dihapus');
     }
 }
+ 

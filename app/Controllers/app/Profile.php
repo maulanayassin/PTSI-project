@@ -9,7 +9,7 @@ class Profile extends Controller
     public function index(){
         // Mengambil ID user dari session
         $userId = session()->get('id');
-        
+         
         // Load model
         $model = new ProfileModel();
         

@@ -28,6 +28,12 @@ $routes->group('app', ['filter' => 'auth'], function($routes) {
     $routes->get('indicator/edit/(:num)', 'App\Indicator::edit/$1');
     // $routes->get('indicator/getCityByProvince/(:num)', 'App\Indicator::getCityByProvince/$1');
     // $routes->get('indicator/getTransactionByCity/', 'App\Indicator::getTransactionByCity');
+    $routes->get('/app/transaction', 'App\Transaction::index'); // Route for listing transactions
+    // $routes->post('/app/transaction/selectCity', 'App\Transaction::selectCity'); 
+    $routes->get('/app/transaction/form', 'App\Transaction::form'); 
+    // $routes->post('/app/transaction/form', 'App\Transaction::submit'); 
+    $routes->get('/app/transaction/edit/(:num)', 'App\Transaction::edit/$1'); 
+    $routes->post('/app/transaction/delete/(:num)', 'App\Transaction::delete/$1'); 
     $routes->post('indicator/selectProvince/', 'App\Indicator::selectProvince');
     $routes->post('indicator/selectCity/', 'App\Indicator::selectCity');
     $routes->post('indicator/delete/(:num)', 'App\Indicator::delete/$1');

@@ -8,7 +8,7 @@ Domain 1
 <h2>Data Domain 1</h2>
 <div class="card">
     <div class="card-header">
-        <div class="card-actions">
+        <div class="card-actions align-items-center justify-content-between">
             <div class="dropdown d-inline-block">
                 <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                     Pilih Domain

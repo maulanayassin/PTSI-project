@@ -8,7 +8,7 @@ Indikator
 <h2>Daftar Indikator</h2>
 <div class="card">
     <div class="card-header">
-        <div class="card-actions d-flex align-items-center justify-content-between">
+        <div class="card-actions align-items-center justify-content-between">
             <!-- Tombol Tambah di sebelah Dropdown -->
             <div class="d-inline-block">
                 <!-- Form untuk memilih Provinsi -->
@@ -30,12 +30,13 @@ Indikator
                         <option value="">Pilih Kota</option>
                         <?php if (isset($kota) && !empty($kota)): ?>
                             <?php foreach ($kota as $city): ?>
-                                <option value="<?= esc($city['id']) ?>"><?= esc($city['city_name']) ?></option>
+                                <option value="<?= esc($city['kemendagri_code']) ?>" 
+                                    <?= isset($selectedCityId) && $selectedCityId == $city['kemendagri_code'] ? 'selected' : '' ?>>
+                                    <?= esc($city['city_name']) ?>
+                                </option>
                             <?php endforeach; ?>
-                        
                         <?php endif; ?>
                     </select>
-                    <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
                 </form>
             </div>
             <!-- <div class="dropdown d-inline-block">

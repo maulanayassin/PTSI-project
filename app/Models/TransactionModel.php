@@ -8,5 +8,5 @@ class TransactionModel extends Model
 {
     protected $table = 'transaction';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['city_id', 'indicator_id', 'year_2019', 'year_2020', 'created_at', 'updated_at'];
+    protected $allowedFields = ['city_name', 'indicator_id', 'goal', 'year_2019', 'year_2020', 'city_id'];
 }
