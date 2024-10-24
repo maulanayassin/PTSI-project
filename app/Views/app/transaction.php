@@ -27,7 +27,7 @@ Provinsi
                     <option value="">Pilih Kota</option>
                 </select>
             </form>
-            <a href="<?= site_url('/app/transaction/form') ?>" class="btn btn-pill">Tambah</a>
+            <!-- <a href="<?= site_url('/app/transaction/form') ?>" class="btn btn-pill">Tambah</a> -->
         </div>
     </div>
     <div class="card-body">
@@ -58,7 +58,7 @@ Provinsi
         let provinceCode = this.value;
 
         if (provinceCode) {
-            fetch('<?= site_url('/app/indicator/getCities') ?>', {
+            fetch('<?= site_url('/app/transaction/getCities') ?>', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -71,10 +71,10 @@ Provinsi
             .then(data => {
                 let kotaDropdown = document.getElementById('kota-dropdown');
                 kotaDropdown.innerHTML = '<option value="">Pilih Kota</option>'; // Reset dropdown kota
-                alert(JSON.stringify(data));
+                // alert(JSON.stringify(data));
                 data.forEach(function(city) {
                     let option = document.createElement('option');
-                    option.value = city.kemendagri_code; // Menggunakan kemendagri_code untuk ID kota
+                    option.value = city.bps_code; // Menggunakan kemendagri_code untuk ID kota
                     option.text = city.city_name; // Tampilkan nama kota
                     kotaDropdown.appendChild(option); // Tambahkan opsi kota ke dropdown
                 });
@@ -88,7 +88,7 @@ Provinsi
 
     document.getElementById('kota-dropdown').addEventListener('change', function() {
         let cityCode = this.value;
-        document.getElementById('city_id').value = cityCode;
+        // alert(JSON.stringify(data));
 
         if (cityCode) {
             fetch('<?= site_url('/app/transaction/getTransactionsByCity') ?>', {

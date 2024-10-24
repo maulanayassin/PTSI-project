@@ -83,7 +83,7 @@ class Transaction extends Controller
         $provinceCode = $request->provinceCode;
 
         // Ambil data kota berdasarkan province_code
-        $cities = $this->cityModel->where('province_code', $provinceCode)->findAll(); // Pastikan kolom yang digunakan benar
+        $cities = $this->cityModel->where('province_id', $provinceCode)->findAll(); // Pastikan kolom yang digunakan benar
 
         // Debugging
         if (empty($cities)) {
