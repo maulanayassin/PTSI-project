@@ -42,7 +42,8 @@ $routes->group('app', ['filter' => 'auth'], function($routes) {
     // $routes->post('/app/transaction/form', 'App\Transaction::submit'); 
     $routes->get('transaction/edit/(:num)', 'App\Transaction::edit/$1'); 
     $routes->post('transaction/delete/(:num)', 'App\Transaction::delete/$1'); 
-    $routes->post('app/indicator/getCities', 'Indicator::getCities');
+    $routes->post('transaction/getCities', 'App\Transaction::getCities');
+    $routes->post('transaction/getTransactionsByCity', 'App\Transaction::getTransactionsByCity');
    
     
     $routes->get('admin/users', 'Admin\Users::index');

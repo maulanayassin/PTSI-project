@@ -71,6 +71,7 @@ Provinsi
             .then(data => {
                 let kotaDropdown = document.getElementById('kota-dropdown');
                 kotaDropdown.innerHTML = '<option value="">Pilih Kota</option>'; // Reset dropdown kota
+                alert(JSON.stringify(data));
                 data.forEach(function(city) {
                     let option = document.createElement('option');
                     option.value = city.kemendagri_code; // Menggunakan kemendagri_code untuk ID kota
