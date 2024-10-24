@@ -10,35 +10,35 @@ Indikator
     <div class="card-header">
         <div class="card-actions align-items-center justify-content-between">
             <!-- Tombol Tambah di sebelah Dropdown -->
-            <div class="d-inline-block">
+            <!-- <div class="d-inline-block"> -->
                 <!-- Form untuk memilih Provinsi -->
-                <form method="POST" action="<?= site_url('/app/indicator/selectProvince') ?>" class="d-inline">
-                    <select class="form-select d-inline w-8" name="kemendagri_code" id="provinsi-dropdown" onchange="this.form.submit()">
-                        <option value="">Pilih Provinsi</option>
-                        <?php foreach ($provinsi as $prov): ?>
-                            <option value="<?= esc($prov['kemendagri_code']) ?>" 
-                                <?= isset($selectedProvinceCode) && $selectedProvinceCode == $prov['kemendagri_code'] ? 'selected' : '' ?>>
-                                <?= esc($prov['province_name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </form>
+                <!-- <form method="POST" action="<?= site_url('/app/indicator/selectProvince') ?>" class="d-inline"> -->
+                    <!-- <select class="form-select d-inline w-8" name="kemendagri_code" id="provinsi-dropdown" onchange="this.form.submit()"> -->
+                        <!-- <option value="">Pilih Provinsi</option> -->
+                        <!-- <?php foreach ($provinsi as $prov): ?> -->
+                            <!-- <option value="<?= esc($prov['kemendagri_code']) ?>"  -->
+                                <!-- <?= isset($selectedProvinceCode) && $selectedProvinceCode == $prov['kemendagri_code'] ? 'selected' : '' ?>> -->
+                                <!-- <?= esc($prov['province_name']) ?> -->
+                            <!-- </option> -->
+                        <!-- <?php endforeach; ?> -->
+                    <!-- </select> -->
+                <!-- </form> -->
 
                 <!-- Dropdown Kota selalu tampil -->
-                <form method="POST" action="<?= site_url('/app/indicator/selectCity') ?>" class="d-inline">
-                    <select class="form-select d-inline w-8" name="city_id" onchange="this.form.submit()">
-                        <option value="">Pilih Kota</option>
-                        <?php if (isset($kota) && !empty($kota)): ?>
-                            <?php foreach ($kota as $city): ?>
-                                <option value="<?= esc($city['kemendagri_code']) ?>" 
-                                    <?= isset($selectedCityId) && $selectedCityId == $city['kemendagri_code'] ? 'selected' : '' ?>>
-                                    <?= esc($city['city_name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
-                </form>
-            </div>
+                <!-- <form method="POST" action="<?= site_url('/app/indicator/selectCity') ?>" class="d-inline"> -->
+                    <!-- <select class="form-select d-inline w-8" name="city_id" onchange="this.form.submit()"> -->
+                        <!-- <option value="">Pilih Kota</option> -->
+                        <!-- <?php if (isset($kota) && !empty($kota)): ?> -->
+                            <!-- <?php foreach ($kota as $city): ?> -->
+                                <!-- <option value="<?= esc($city['kemendagri_code']) ?>"  -->
+                                    <!-- <?= isset($selectedCityId) && $selectedCityId == $city['kemendagri_code'] ? 'selected' : '' ?>> -->
+                                    <!-- <?= esc($city['city_name']) ?> -->
+                                <!-- </option> -->
+                            <!-- <?php endforeach; ?> -->
+                        <!-- <?php endif; ?> -->
+                    <!-- </select> -->
+                <!-- </form> -->
+            <!-- </div> -->
             <!-- <div class="dropdown d-inline-block">
                 <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                     Pilih Domain

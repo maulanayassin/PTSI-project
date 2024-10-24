@@ -3,83 +3,93 @@
 namespace App\Controllers\App;
 
 use App\Models\TransactionModel;
+use App\Models\ProvinceModel;
+use App\Models\CityModel;
 use CodeIgniter\Controller;
 
 class Transaction extends Controller
 {
+    protected $transactionModel;
+    protected $provinceModel;
+    protected $cityModel;
+
+    public function __construct()
+    {
+        $this->transactionModel = new TransactionModel();
+        $this->provinceModel = new ProvinceModel();
+        $this->cityModel = new CityModel();
+    }
+
     public function index()
     {
-        $cityId = session()->get('selectedCityId');
-        $model = new TransactionModel();
-        // Cek apakah ada ID kota yang dipilih dalam session
-        if ($cityId) {
-            // Jika ID kota ada, ambil transaksi untuk kota tersebut
-            $data['transaksi'] = $model->where('city_id', $cityId)->findAll();
-        } else {
-            // Jika tidak ada kota yang dipilih, ambil semua transaksi
-            $data['transaksi'] = $model->findAll();
-        }
-
+        $data['transaksi'] = [];
+        $data['provinsi'] = $this->provinceModel->findAll();
         return view('app/transaction', $data);
     }
-    
-    public function form($id=0) {
-        $data['record_transaction'] = null;
-        if ($id !== 0) {
-            $db = \Config\Database::connect();
-            $data['record_transaction'] = $db->table('transaction')->get()->getRow();
+
+    public function form($id = 0)
+    {
+        $data = [];
+        if ($id != 0) {
+            $data['transaksi'] = $this->transactionModel->find($id);
         }
-        // $data['scripts'] = [
-        //     '/js/app_indicator.js',
-        // ];
-        return view('app/transaction_form', $data);
+        $data['provinsi'] = $this->provinceModel->findAll(); // Menambahkan data provinsi untuk dropdown
+        return view('transaction/form', $data);
     }
 
-    public function submit() {
-        $db = \Config\Database::connect();
-        $id = $this->request->getPost('id');
-        $row = $db->table('transaction')->where('id', $id)->get()->getRow();
-        if ($row == null) {
-            $db->table('transaction')->insert([
-                'indicator_name' => $this->request->getPost('indicator_name'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ]);
-            
-        } else {
-            $db->table('transaction')->update([
-                'indicator_name' => $this->request->getPost('indicator_name'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ],[
-                'id' => $id,
-            ]);
-            
+    public function submit()
+    {
+        $postData = $this->request->getPost();
+        if ($this->validate([
+            'city_id' => 'required', // Menggunakan city_id
+            'indicator_id' => 'required',
+            'goal' => 'required',
+        ])) {
+            if (isset($postData['id'])) {
+                $this->transactionModel->update($postData['id'], $postData);
+            } else {
+                $this->transactionModel->insert($postData);
+            }
+            return redirect()->to('/app/transaction')->with('success', 'Data berhasil disimpan.');
         }
-        return redirect()->to('/app/transaction');
+        return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
     }
 
     public function edit($id)
     {
-        $db = \Config\Database::connect();
-        // Mengambil data berdasarkan ID
-        $data['record_transaction'] = $db->table('transaction')->where('id', $id)->get()->getRow();
-        
-        // Cek jika data ditemukan
-        if (!$data['record_transaction']) {
-            return redirect()->to('/app/transaction')->with('error', 'Data tidak ditemukan');
+        return $this->form($id);
+    }
+
+    public function delete($id)
+    {
+        $this->transactionModel->delete($id);
+        return redirect()->to('/app/transaction')->with('success', 'Data berhasil dihapus.');
+    }
+
+    public function getTransactionsByCity()
+    {
+        $request = $this->request->getJSON();
+        $cityCode = $request->cityCode;
+
+        // Ambil data transaksi berdasarkan city_id
+        $transaksi = $this->transactionModel->where('city_id', $cityCode)->findAll();
+
+        return $this->response->setJSON($transaksi);
+    }
+
+    public function getCities()
+    {
+        $request = $this->request->getJSON();
+        $provinceCode = $request->provinceCode;
+
+        // Ambil data kota berdasarkan province_code
+        $cities = $this->cityModel->where('province_code', $provinceCode)->findAll(); // Pastikan kolom yang digunakan benar
+
+        // Debugging
+        if (empty($cities)) {
+            log_message('error', 'No cities found for province: ' . $provinceCode);
         }
-
-        // Load JavaScript jika diperlukan 
-        // $data['scripts'] = [
-        //     '/js/app_indicator.js',
-        // ];
-
-        // Menampilkan form edit dengan data yang diambil
-        return view('app/transaction_form', $data);
+        return $this->response->setJSON($cities);
     }
 
-    public function delete($id) {
-        $model = new TransactionModel();
-        $model->delete($id);
-        return redirect()->to('/app/Transaction');
-    }
 }

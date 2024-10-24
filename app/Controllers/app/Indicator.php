@@ -101,54 +101,54 @@ class Indicator extends Controller
         return redirect()->to('/app/indicator')->with('success', 'Data berhasil dihapus');
     }
 
-    public function selectProvince()
-    {
-        // Load models
-        $model = new IndicatorModel();
-        $provinceModel = new ProvinceModel();
-        $cityModel = new CityModel();
+    // public function selectProvince()
+    // {
+    //     // Load models
+    //     $model = new IndicatorModel();
+    //     $provinceModel = new ProvinceModel();
+    //     $cityModel = new CityModel();
         
-        // Ambil kemendagri_code yang dipilih dari request POST
-        $kemendagriCode = $this->request->getPost('kemendagri_code');
+    //     // Ambil kemendagri_code yang dipilih dari request POST
+    //     $kemendagriCode = $this->request->getPost('kemendagri_code');
         
-        // Ambil daftar provinsi
-        $province = $provinceModel->findAll();
+    //     // Ambil daftar provinsi
+    //     $province = $provinceModel->findAll();
         
-        // Ambil data indikator
-        $dataIndicator = $model->findAll();
+    //     // Ambil data indikator
+    //     $dataIndicator = $model->findAll();
         
-        // Jika provinsi dipilih, ambil daftar kota berdasarkan kemendagri_code
-        $city = [];
-        if ($kemendagriCode) {
-            $city = $cityModel->where('province_id', $kemendagriCode)->findAll();
-        }
+    //     // Jika provinsi dipilih, ambil daftar kota berdasarkan kemendagri_code
+    //     $city = [];
+    //     if ($kemendagriCode) {
+    //         $city = $cityModel->where('province_id', $kemendagriCode)->findAll();
+    //     }
         
-        // Kirimkan data ke view
-        return view('app/indicator', [
-            'provinsi' => $province,
-            'kota' => $city,
-            'selectedProvinceCode' => $kemendagriCode, // Untuk menandai provinsi yang dipilih
-            'data_indicator' => $dataIndicator, // Data indikator yang diambil
-            'scripts' => ['/js/app_indicator.js'] // Jika Anda perlu menginclude script
-        ]);
-    }
+    //     // Kirimkan data ke view
+    //     return view('app/indicator', [
+    //         'provinsi' => $province,
+    //         'kota' => $city,
+    //         'selectedProvinceCode' => $kemendagriCode, // Untuk menandai provinsi yang dipilih
+    //         'data_indicator' => $dataIndicator, // Data indikator yang diambil
+    //         'scripts' => ['/js/app_indicator.js'] // Jika Anda perlu menginclude script
+    //     ]);
+    // }
 
 
-    public function selectCity()
-    {
+    // public function selectCity()
+    // {
         
-        // Mendapatkan city_id dari form yang di-submit
-        $cityId = $this->request->getPost('city_id');
-        echo($cityId);
-        // Periksa apakah city_id dikirim dan valid
-        if (!empty($cityId)) {
-            // Menyimpan city_id ke dalam session
-            session()->set('selectedCityId', $cityId);
-        } else {
-            // Jika city_id tidak valid atau kosong, hapus session
-            session()->remove('selectedCityId');
-        }
-        return view('/app/transaction');
-    }
+    //     // Mendapatkan city_id dari form yang di-submit
+    //     $cityId = $this->request->getPost('city_id');
+    //     echo($cityId);
+    //     // Periksa apakah city_id dikirim dan valid
+    //     if (!empty($cityId)) {
+    //         // Menyimpan city_id ke dalam session
+    //         session()->set('selectedCityId', $cityId);
+    //     } else {
+    //         // Jika city_id tidak valid atau kosong, hapus session
+    //         session()->remove('selectedCityId');
+    //     }
+    //     return view('/app/transaction');
+    // }
 
 }
