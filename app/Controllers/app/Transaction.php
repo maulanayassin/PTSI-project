@@ -34,7 +34,7 @@ class Transaction extends Controller
             $data['transaksi'] = $this->transactionModel->find($id);
         }
         $data['provinsi'] = $this->provinceModel->findAll(); // Menambahkan data provinsi untuk dropdown
-        return view('transaction/form', $data);
+        return view('app/transaction_form', $data);
     }
 
     public function submit()
@@ -57,7 +57,15 @@ class Transaction extends Controller
 
     public function edit($id)
     {
-        return $this->form($id);
+        $data['transaksi'] = $this->transactionModel->find($id); // Ambil data berdasarkan ID
+        if (!$data['transaksi']) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException("Data transaksi dengan ID $id tidak ditemukan");
+        }
+
+        // Ambil data provinsi untuk dropdown
+        $data['provinsi'] = $this->provinceModel->findAll();
+
+        return view('transaction_form', $data);
     }
 
     public function delete($id)
@@ -70,6 +78,7 @@ class Transaction extends Controller
     {
         $request = $this->request->getJSON();
         $cityCode = $request->cityCode;
+        
 
         // Ambil data transaksi berdasarkan city_id
         $transaksi = $this->transactionModel->where('city_id', $cityCode)->findAll();
@@ -91,5 +100,20 @@ class Transaction extends Controller
         }
         return $this->response->setJSON($cities);
     }
+    
+    public function getTransactionsByCityAndDomain()
+    {
+        if ($this->request->isAJAX()) {
+            $cityCode = $this->request->getPost('cityCode');
+            $domain = $this->request->getPost('domain');
 
+            // Ambil data transaksi berdasarkan cityCode dan domain
+            $transactionModel = new TransactionModel();
+            $transactions = $transactionModel->where('city_id', $cityCode)
+                                            ->where('domain', $domain) // Filter berdasarkan domain
+                                            ->findAll();
+
+            return $this->response->setJSON($transactions);
+        }
+    }
 }

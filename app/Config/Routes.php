@@ -44,6 +44,8 @@ $routes->group('app', ['filter' => 'auth'], function($routes) {
     $routes->post('transaction/delete/(:num)', 'App\Transaction::delete/$1'); 
     $routes->post('transaction/getCities', 'App\Transaction::getCities');
     $routes->post('transaction/getTransactionsByCity', 'App\Transaction::getTransactionsByCity');
+    $routes->post('transaction/getTransactionsByCityAndDomain', 'Transaction::getTransactionsByCityAndDomain');
+
    
     
     $routes->get('admin/users', 'Admin\Users::index');
