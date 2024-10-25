@@ -31,7 +31,7 @@ class Transaction extends Controller
     {
         $data = [];
         if ($id != 0) {
-            $data['transaksi'] = $this->transactionModel->find($id);
+            $data['transaction'] = $this->transactionModel->find($id); // Change to 'transaction'
         }
         $data['provinsi'] = $this->provinceModel->findAll(); // Menambahkan data provinsi untuk dropdown
         return view('app/transaction_form', $data);
@@ -39,33 +39,64 @@ class Transaction extends Controller
 
     public function submit()
     {
-        $postData = $this->request->getPost();
+        // Menghubungkan ke database
+        $db = \Config\Database::connect();
+        $id = $this->request->getPost('id'); // Mengambil ID dari form
+
+        // Validasi data yang diterima
         if ($this->validate([
-            'city_id' => 'required', // Menggunakan city_id
-            'indicator_id' => 'required',
             'goal' => 'required',
+            'year_2019' => 'required', 
+            'year_2020' => 'required', 
+            'domain' => 'required|in_list[1,2,3]', // Validasi domain harus salah satu dari pilihan yang ada
         ])) {
-            if (isset($postData['id'])) {
-                $this->transactionModel->update($postData['id'], $postData);
+            // Cek apakah ID ada di database
+            $row = $db->table('transaction')->where('id', $id)->get()->getRow();
+            
+            // Jika tidak ada data dengan ID tersebut, berarti kita melakukan insert
+            if ($row == null) {
+                $db->table('transaction')->insert([
+                    'goal' => $this->request->getPost('goal'),
+                    'year_2019' => $this->request->getPost('year_2019'),
+                    'year_2020' => $this->request->getPost('year_2020'),
+                    'domain' => $this->request->getPost('domain'),
+                    'created_at' => date('Y-m-d H:i:s'), // Menambahkan timestamp saat data dibuat
+                    'updated_at' => date('Y-m-d H:i:s'), // Menambahkan timestamp saat data diupdate
+                ]);
             } else {
-                $this->transactionModel->insert($postData);
+                // Jika ada, lakukan update
+                $db->table('transaction')->update([
+                    'goal' => $this->request->getPost('goal'),
+                    'year_2019' => $this->request->getPost('year_2019'),
+                    'year_2020' => $this->request->getPost('year_2020'),
+                    'domain' => $this->request->getPost('domain'),
+                    'updated_at' => date('Y-m-d H:i:s'), // Update timestamp
+                ], [
+                    'id' => $id, // Menentukan ID yang akan diupdate
+                ]);
             }
+
+            // Redirect setelah sukses
             return redirect()->to('/app/transaction')->with('success', 'Data berhasil disimpan.');
         }
+
+        // Jika validasi gagal, redirect kembali ke form dengan input dan pesan error
+        log_message('error', 'Validation failed: ' . json_encode($this->validator->getErrors()));
         return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
     }
 
+
     public function edit($id)
     {
-        $data['transaksi'] = $this->transactionModel->find($id); // Ambil data berdasarkan ID
-        if (!$data['transaksi']) {
+        $data['transaction'] = $this->transactionModel->find($id); // Change to 'transaction'
+        if (!$data['transaction']) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException("Data transaksi dengan ID $id tidak ditemukan");
         }
 
         // Ambil data provinsi untuk dropdown
         $data['provinsi'] = $this->provinceModel->findAll();
 
-        return view('transaction_form', $data);
+        return view('app/transaction_form', $data);
     }
 
     public function delete($id)

@@ -127,8 +127,8 @@ Provinsi
 
                         let actionCell = row.insertCell(5);
                         actionCell.innerHTML = `
-                            <a href="<?= site_url('/app/Transaction/edit/') ?>${transaction.id}" class="btn btn-sm">Edit</a>
-                            <form action="<?= site_url('/app/Transaction/delete/') ?>${transaction.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');" class="d-inline-block">
+                            <a href="<?= site_url('/app/transaction/edit/') ?>${transaction.id}" class="btn btn-sm">Edit</a>
+                            <form action="<?= site_url('/app/transaction/delete/') ?>${transaction.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');" class="d-inline-block">
                                 <button type="submit" class="btn btn-sm">Hapus</button>
                             </form>
                         `;
@@ -160,8 +160,8 @@ Provinsi
 
                 let actionCell = row.insertCell(5);
                 actionCell.innerHTML = `
-                    <a href="<?= site_url('/app/Transaction/edit/') ?>${transaction.id}" class="btn btn-sm">Edit</a>
-                    <form action="<?= site_url('/app/Transaction/delete/') ?>${transaction.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');" class="d-inline-block">
+                    <a href="<?= site_url('/app/transaction/edit/') ?>${transaction.id}" class="btn btn-sm">Edit</a>
+                    <form action="<?= site_url('/app/transaction/delete/') ?>${transaction.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');" class="d-inline-block">
                         <button type="submit" class="btn btn-sm">Hapus</button>
                     </form>
                 `;
@@ -184,8 +184,8 @@ Provinsi
 
                     let actionCell = row.insertCell(5);
                     actionCell.innerHTML = `
-                        <a href="<?= site_url('/app/Transaction/edit/') ?>${transaction.id}" class="btn btn-sm">Edit</a>
-                        <form action="<?= site_url('/app/Transaction/delete/') ?>${transaction.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');" class="d-inline-block">
+                        <a href="<?= site_url('/app/transaction/edit/') ?>${transaction.id}" class="btn btn-sm">Edit</a>
+                        <form action="<?= site_url('/app/transaction/delete/') ?>${transaction.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');" class="d-inline-block">
                             <button type="submit" class="btn btn-sm">Hapus</button>
                         </form>
                     `;
