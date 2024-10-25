@@ -9,9 +9,9 @@ Edit Transaction
 <div class="card">
     <div class="card-body">
         <!-- Form untuk mengedit data transaksi -->
-        <form action="<?= site_url('/app/transaction/submit/' . $transaction['id']) ?>" method="post">
+        <form action="<?= site_url('/app/transaction/submit/') ?>" method="post">
             <?= csrf_field() ?>
-
+            <input type="hidden" name="id" value="<?=$transaction['id']?>">
             <!-- Input Nama Kota -->
             <div class="mb-3">
                 <label for="city_name" class="form-label">Nama Kota</label>

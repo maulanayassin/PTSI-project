@@ -42,7 +42,7 @@ $routes->group('app', ['filter' => 'auth'], function($routes) {
     // $routes->post('/app/transaction/form', 'App\Transaction::submit'); 
     $routes->get('transaction/edit/(:num)', 'App\Transaction::edit/$1'); 
     $routes->post('transaction/delete/(:num)', 'App\Transaction::delete/$1');
-    $routes->post('transaction/submit/(:num)', 'App\Transaction::submit/$1');
+    $routes->post('transaction/submit/', 'App\Transaction::submit');
     $routes->post('transaction/getCities', 'App\Transaction::getCities');
     $routes->post('transaction/getTransactionsByCity', 'App\Transaction::getTransactionsByCity');
     $routes->post('transaction/getTransactionsByCityAndDomain', 'Transaction::getTransactionsByCityAndDomain');
