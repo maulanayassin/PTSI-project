@@ -38,12 +38,16 @@ class Province extends Controller{
         if ($row == null) {
             $db->table('province')->insert([
                 'province_name' => $this->request->getPost('province_name'),
+                'kemendagri_code' => $this->request->getPost('kemendagri_code'),
+                'bps_code' => $this->request->getPost('bps_code'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);
             
         } else {
             $db->table('province')->update([
                 'province_name' => $this->request->getPost('province_name'),
+                'kemendagri_code' => $this->request->getPost('kemendagri_code'),
+                'bps_code' => $this->request->getPost('bps_code'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],[
                 'id' => $id,

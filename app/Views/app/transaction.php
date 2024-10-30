@@ -193,6 +193,93 @@ Provinsi
             }
         }
     });
+
+    // Fungsi untuk menyimpan data di cookies
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            let date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        console.log("Setting cookie:", document.cookie); // Untuk verifikasi
+    }
+
+
+    // Fungsi untuk mengambil nilai dari cookies
+    function getCookie(name) {
+        let nameEQ = name + "=";
+        let ca = document.cookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    // Menyimpan pilihan provinsi, kota, dan domain ke cookies saat ada perubahan
+    document.getElementById('provinsi-dropdown').addEventListener('change', function() {
+        setCookie('selectedProvince', this.value, 7);
+    });
+
+    document.getElementById('kota-dropdown').addEventListener('change', function() {
+        setCookie('selectedCity', this.value, 7);
+    });
+
+    document.getElementById('domain-dropdown').addEventListener('change', function() {
+        console.log("Domain selected:", this.value); // Untuk memastikan nilai domain terdeteksi
+        setCookie('selectedDomain', this.value, 7);
+        console.log("Cookie selectedDomain set to:", getCookie('selectedDomain')); // Verifikasi apakah cookie disimpan
+    });
+
+
+    // Fungsi untuk menetapkan pilihan sesuai dengan data di cookies
+    window.onload = async function() {
+        const selectedProvince = getCookie('selectedProvince');
+        const selectedCity = getCookie('selectedCity');
+        const selectedDomain = getCookie('selectedDomain');
+
+        try {
+            // Langkah 1: Set Provinsi dan muat data kota
+            if (selectedProvince) {
+                document.getElementById('provinsi-dropdown').value = selectedProvince;
+                await new Promise(resolve => {
+                    document.getElementById('provinsi-dropdown').addEventListener('change', resolve, { once: true });
+                    document.getElementById('provinsi-dropdown').dispatchEvent(new Event('change'));
+                });
+            }
+
+            // Langkah 2: Set Kota (pastikan data kota sudah dimuat)
+            if (selectedCity) {
+                await new Promise(resolve => setTimeout(resolve, 100)); // Tunggu data kota selesai dimuat
+                document.getElementById('kota-dropdown').value = selectedCity;
+                document.getElementById('kota-dropdown').dispatchEvent(new Event('change'));
+            }
+
+            // Langkah 3: Set Domain
+            if (selectedDomain) {
+                document.getElementById('domain-dropdown').value = selectedDomain;
+                document.getElementById('domain-dropdown').dispatchEvent(new Event('change'));
+            }
+        } catch (error) {
+            console.error('Error saat memuat pengaturan tersimpan:', error);
+        }
+    };
+
+    // Fungsi untuk menghapus cookies
+    function deleteCookie(name) {
+        document.cookie = name + '=; Max-Age=-99999999;';
+    }
+
+    // Bersihkan cookies saat tombol 'Simpan Perubahan' diklik
+    document.querySelector('form').addEventListener('submit', function() {
+        deleteCookie('selectedProvince');
+        deleteCookie('selectedCity');
+        deleteCookie('selectedDomain');
+    });
+
 </script>
 
 <?= $this->endSection() ?>

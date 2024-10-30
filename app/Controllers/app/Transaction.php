@@ -34,6 +34,7 @@ class Transaction extends Controller
             $data['transaction'] = $this->transactionModel->find($id); // Change to 'transaction'
         }
         $data['provinsi'] = $this->provinceModel->findAll(); // Menambahkan data provinsi untuk dropdown
+        
         return view('app/transaction_form', $data);
     }
 

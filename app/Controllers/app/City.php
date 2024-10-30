@@ -17,19 +17,15 @@ class City extends Controller
 
     public function form($id = 0)
     {
-        // Tampilkan form tambah atau edit 
         $data['record_city'] = null;
-        
+        $provinceModel = new ProvinceModel();
+        $data['province'] = $provinceModel->getProvince(); // Pindahkan ke luar kondisi if
+
         if ($id !== 0) {
             $db = \Config\Database::connect();
-            $data['record_city'] = $db->table('city')->get()->getRow();
-            $provinceModel = new ProvinceModel();
-            // Ambil data provinsi 
-            $data['province'] = $provinceModel->getProvince();
+            $data['record_city'] = $db->table('city')->where('id', $id)->get()->getRow();
         }
-        // $data['scripts'] = [
-        //     '/js/app_province.js',
-        // ];
+
         return view('app/city_form', $data);
     }
 
@@ -78,5 +74,6 @@ class City extends Controller
         return redirect()->to('/app/city')->with('success', 'Data berhasil dihapus');
     }
 
+    
     
 }

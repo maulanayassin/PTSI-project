@@ -1,169 +1,118 @@
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('title') ?>
-Home Page
+SDG Data Monitoring
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<!-- <h2>Welcome to My Website</h2>
-<p>This is the home page.</p> -->
+<h2 class="page-title">Sustainable Development Goals (SDG) Monitoring</h2>
+<p>Welcome to the SDG data monitoring dashboard. Here, you can track and analyze key metrics across different goals and regions.</p>
+
 <div class="page-wrapper">
-    <!-- Page body -->
-    <div class="page-body">
-        <div class="container-xl">
-            <div class="row row-cards">
-                <!-- SDG Introduction Section -->
-                
-                <!-- Embed iframe -->
-                <!-- <div class="col-md-12" style="height: 600px;">
-                    <iframe width="770" height="580" scrolling="no" 
-                        src="https://v3.polymersearch.com/b/67035c3429b08d000849277c?m=embed&b=470e7222-e039-44cf-b0d0-3c0df5d28345&f=1&c=1"
-                        style="overflow:hidden;height:100%;width:100%;position:relative;">
-                    </iframe>
-                </div>
-                <div class="col-md-6" style="height: 500px;">
-                    <iframe width="770" height="580" scrolling="no" 
-                        src="https://v3.polymersearch.com/b/67035c3429b08d000849277c?m=embed&b=06823448-f1b2-409a-a053-8810e1e6347b&f=1&c=1"
-                        style="overflow:hidden;height:100%;width:100%;position:relative;">
-                    </iframe>
-                </div>
-                <div class="col-md-6" style="height: 500px;">
-                    <iframe width="770" height="580" scrolling="no" 
-                        src="https://v3.polymersearch.com/b/67035c3429b08d000849277c?m=embed&b=342178ee-b329-4539-9637-e3468ac5766e&f=1&c=1" 
-                        style="overflow:hidden;height:100%;width:100%;position:relative;">
-                    </iframe>
-                </div>
-                <div class="col-md-12" style="height:600px;">
-                    <iframe width="770" height="580" scrolling="no" 
-                        src="https://v3.polymersearch.com/b/67035c3429b08d000849277c?m=embed&b=02f2f448-7899-4cf4-b4ce-36b4511f4e02&f=1&c=1" 
-                        style="overflow:hidden;height:100%;width:100%;position:relative;" >
-                    </iframe>
-                </div> -->
-                <!-- <div class="col-md-12" style="height: 600px;">
-                    <iframe width="770" height="580" scrolling="no" 
-                        src="https://v3.polymersearch.com/b/6711c3bdae6d5b0009630c98?m=embed&b=e81c64c9-0f5a-4c0f-b606-de563295ed5d&f=1&c=1" 
-                        style="overflow:hidden;height:100%;width:100%;position:relative;">
-                    </iframe>
-                </div> -->
-                <div class="col-md-6" style="height: 500px;">
-                    <iframe width="770" height="580" scrolling="no" 
-                        src="https://v3.polymersearch.com/b/67035c3429b08d000849277c?m=embed&b=06823448-f1b2-409a-a053-8810e1e6347b&f=1&c=1"
-                        style="overflow:hidden;height:100%;width:100%;position:relative;">
-                    </iframe>
-                </div>
-                <div class="col-md-6" style="height: 500px;">
-                    <iframe width="770" height="580" scrolling="no" 
-                        src="https://v3.polymersearch.com/b/67035c3429b08d000849277c?m=embed&b=342178ee-b329-4539-9637-e3468ac5766e&f=1&c=1" 
-                        style="overflow:hidden;height:100%;width:100%;position:relative;">
-                    </iframe>
-                </div>
-                <div class="col-md-12" style="height:600px;">
-                    <iframe width="770" height="580" scrolling="no" 
-                        src="https://v3.polymersearch.com/b/67035c3429b08d000849277c?m=embed&b=02f2f448-7899-4cf4-b4ce-36b4511f4e02&f=1&c=1" 
-                        style="overflow:hidden;height:100%;width:100%;position:relative;" >
-                    </iframe>
-                </div>
-                <!-- <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="subheader">Currently up for</div>
-                            <div class="h3 m-0">14 days 2 hours 54 mins 34 seconds</div>
-                        </div>
+    <div class="container-xl">
+        <!-- Overview Cards -->
+        <!-- <div class="row row-cards">
+            <div class="col-md-3 col-sm-6">
+                <div class="card card-metric">
+                    <div class="card-body">
+                        <h3 class="card-title">Goal 1</h3>
+                        <div class="metric-value">No Poverty</div>
+                        <div class="metric-status">Status: <span class="status-green">On Track</span></div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="subheader">Last checked at</div>
-                            <div class="h3 m-0">27 seconds ago</div>
-                        </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card card-metric">
+                    <div class="card-body">
+                        <h3 class="card-title">Goal 2</h3>
+                        <div class="metric-value">Zero Hunger</div>
+                        <div class="metric-status">Status: <span class="status-yellow">Needs Improvement</span></div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="subheader">Incidents</div>
-                            <div class="h3 m-0">3</div>
-                        </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card card-metric">
+                    <div class="card-body">
+                        <h3 class="card-title">Goal 3</h3>
+                        <div class="metric-value">Good Health and Well-Being</div>
+                        <div class="metric-status">Status: <span class="status-red">Off Track</span></div>
                     </div>
                 </div>
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title">Response times across regions in the last day</h3>
-                        </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card card-metric">
+                    <div class="card-body">
+                        <h3 class="card-title">Goal 4</h3>
+                        <div class="metric-value">Quality Education</div>
+                        <div class="metric-status">Status: <span class="status-green">On Track</span></div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title">Uptime incidents per day</h3>
-                        </div>
+            </div>
+        </div> -->
+
+        <!-- SDG Visualization Section -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-visualization">
+                    <div class="card-header">
+                        <h3 class="card-title">SDG Goal Progress - Visualizations</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Embed iframe visualizations or charts here -->
+                        <iframe width="100%" height="600" src="https://v3.polymersearch.com/b/6711c3bdae6d5b0009630c98?m=embed&b=e81c64c9-0f5a-4c0f-b606-de563295ed5d&f=1&c=1" style="border:none;"></iframe>
                     </div>
                 </div>
-                <class="col-12">
-                    <div class="card">
-                        <div class="card-table table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                    <th>Time period</th>
-                                    <th>Availability</th>
-                                    <th>Downtime</th>
-                                    <th>Incidents</th>
-                                    <th>Longest incident</th>
-                                    <th>Avg. incident</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                    <td>Today</td>
-                                    <td>98.9533%</td>
-                                    <td>1 minute</td>
-                                    <td>1</td>
-                                    <td>1 minute</td>
-                                    <td>1 minute</td>
-                                    </tr>
-                                    <tr>
-                                    <td>Last 7 days</td>
-                                    <td>98.9533%</td>
-                                    <td>1 minute</td>
-                                    <td>1</td>
-                                    <td>1 minute</td>
-                                    <td>1 minute</td>
-                                    </tr>
-                                    <tr>
-                                    <td>Last 30 days</td>
-                                    <td>98.9533%</td>
-                                    <td>1 minute</td>
-                                    <td>1</td>
-                                    <td>1 minute</td>
-                                    <td>1 minute</td>
-                                    </tr>
-                                    <tr>
-                                    <td>Last 365 days</td>
-                                    <td>98.9533%</td>
-                                    <td>1 minute</td>
-                                    <td>1</td>
-                                    <td>1 minute</td>
-                                    <td>1 minute</td>
-                                    </tr>
-                                    <tr>
-                                    <td>All time</td>
-                                    <td>98.9533%</td>
-                                    <td>1 minute</td>
-                                    <td>1</td>
-                                    <td>1 minute</td>
-                                    <td>1 minute</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+            </div>
+        </div>
+
+        <!-- Data Tables Section -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-data-table">
+                    <div class="card-header">
+                        <h3 class="card-title">Detailed SDG Metrics</h3>
                     </div>
-                </div> -->
-            </div>            
+                    <div class="card-table table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Goal</th>
+                                    <th>Progress (%)</th>
+                                    <th>Region</th>
+                                    <th>Last Update</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>No Poverty</td>
+                                    <td>75%</td>
+                                    <td>Asia</td>
+                                    <td>2023-09-15</td>
+                                    <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Zero Hunger</td>
+                                    <td>60%</td>
+                                    <td>Africa</td>
+                                    <td>2023-09-12</td>
+                                    <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                                </tr>
+                                <tr>
+                                    <td>Quality Education</td>
+                                    <td>85%</td>
+                                    <td>Europe</td>
+                                    <td>2023-09-10</td>
+                                    <td><button class="btn btn-sm btn-primary">View Details</button></td>
+                                </tr>
+                                <!-- More data rows here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div> 
-    
+</div>
+
 <?= $this->endSection() ?>

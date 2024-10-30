@@ -9,11 +9,11 @@ Indikator
 <?= csrf_field() ?> 
 <input type="hidden" name="id" id="id" value="<?= ($record_indicator !== null ? $record_indicator->id : "") ?>">
 <div class="card">
-    <div class="card-header">
+    <!-- <div class="card-header">
         <div class="card-actions">
             <button type="submit" class="btn btn-pill">Simpan</button>
         </div>
-    </div>
+    </div> -->
     <div class="card-body">
         <div class="row">
             <div class="mb-3">

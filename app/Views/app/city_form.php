@@ -17,11 +17,11 @@ Kabupaten / Kota
     </div> -->
     <div class="card-body">
         <div class="row">
-            <div class="form-group">
+            <div class="mb-3">
                 <label class="form-label">Nama Kabupaten</label>
                 <input type="text" name="city_name" id="city_name" class="form-control" maxlength="100" value="<?= ($record_city !== null ? $record_city->city_name : "") ?>">
             </div>
-            <div class="form-group">
+            <div class="mb-3">
                 <label class="form-label">Provinsi</label>
                 <select name="prov_id" id="prov_id" class="form-select" required>
                     <?php if (empty($province)): ?>
@@ -34,6 +34,14 @@ Kabupaten / Kota
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </select>                
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Kode BPS</label>
+                <input type="text" name="bps_code" id="bps_code" class="form-control" maxlength="100"  value="<?= ($record_city !== null ? $record_city->bps_code : "") ?>">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Kode Kemendagri</label>
+                <input type="text" name="kemendagri_code" id="kemendagri_code" class="form-control" maxlength="100"  value="<?= ($record_city !== null ? $record_city->kemendagri_code : "") ?>">
             </div>
         </div>
     </div>
