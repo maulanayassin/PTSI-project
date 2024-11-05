@@ -36,6 +36,12 @@ Provinsi
                     <option value="3">Domain 3</option>
                 </select>
             </form>
+            <button id="refresh-button" class=" btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"></path>
+                    <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path>
+                </svg>Refresh</button>
         </div>
     </div>
     <div class="card-body">
@@ -48,6 +54,7 @@ Provinsi
                     <th>Goal</th>
                     <th>Tahun 2019</th>
                     <th>Tahun 2020</th>
+                    <th>Growth Rate</th>
                     <th class="w-8">Aksi</th>
                 </tr>
                 </thead>
@@ -62,224 +69,140 @@ Provinsi
 </div>
 
 <script>
+    const baseUrl = '<?= site_url('/app/transaction/') ?>';
+    const csrfToken = '<?= csrf_hash() ?>';
+
+    function populateDropdown(dropdown, options) {
+        dropdown.innerHTML = '<option value="">Pilih Kota</option>';
+        options.forEach(option => {
+            const opt = document.createElement('option');
+            opt.value = option.bps_code;
+            opt.textContent = option.city_name;
+            dropdown.appendChild(opt);
+        });
+    }
+
+    function renderTable(data) {
+        const tableBody = document.getElementById('transaction-table').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = ''; // Clear existing rows
+
+        let groupedData = {};
+        data.forEach(function(transaction) {
+            let key = transaction.city_name + '-' + transaction.indicator_id;
+            if (!groupedData[key]) {
+                groupedData[key] = {
+                    city_name: transaction.city_name,
+                    indicator_id: transaction.indicator_id,
+                    goal: transaction.goal,
+                    year_2019: null,
+                    year_2020: null,
+                    growth_rate: null, // Initialize growth rate
+                    id: transaction.id // Assuming you have an id field for actions
+                };
+            }
+            if (transaction.year === '2019') {
+                groupedData[key].year_2019 = transaction.value;
+            } else if (transaction.year === '2020') {
+                groupedData[key].year_2020 = transaction.value;
+            }
+            groupedData[key].growth_rate = transaction.growth_rate; // Get growth rate
+        });
+
+        Object.values(groupedData).forEach(function(transaction) {
+            let row = tableBody.insertRow();
+            row.insertCell(0).textContent = transaction.city_name;
+            row.insertCell(1).textContent = transaction.indicator_id;
+            row.insertCell(2).textContent = transaction.goal;
+            row.insertCell(3).textContent = transaction.year_2019 !== null ? transaction.year_2019 : '-';
+            row.insertCell(4).textContent = transaction.year_2020 !== null ? transaction.year_2020 : '-';
+            row.insertCell(5).textContent = transaction.growth_rate !== null ? transaction.growth_rate : '-'; // Display growth rate
+
+            let actionCell = row.insertCell(6); // Adjust the index for actions
+            actionCell.innerHTML = `
+                <a href="${baseUrl}edit/${transaction.id}" class="btn btn-sm">Edit</a>
+                <form action="${baseUrl}delete/${transaction.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');" class="d-inline-block">
+                    <button type="submit" class="btn btn-sm">Hapus</button>
+                </form>
+            `;
+        });
+    }
+
+
     document.getElementById('provinsi-dropdown').addEventListener('change', function() {
-        let provinceCode = this.value;
+        const provinceCode = this.value;
 
         if (provinceCode) {
-            fetch('<?= site_url('/app/transaction/getCities') ?>', {
+            fetch(`${baseUrl}getCities`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': '<?= csrf_hash() ?>'
+                    'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify({ provinceCode: provinceCode })
             })
             .then(response => response.json())
             .then(data => {
-                let kotaDropdown = document.getElementById('kota-dropdown');
-                kotaDropdown.innerHTML = '<option value="">Pilih Kota</option>';
-                data.forEach(function(city) {
-                    let option = document.createElement('option');
-                    option.value = city.bps_code;
-                    option.text = city.city_name;
-                    kotaDropdown.appendChild(option);
-                });
+                populateDropdown(document.getElementById('kota-dropdown'), data);
+                document.getElementById('domain-dropdown').disabled = true; // Disable domain dropdown until city is selected
             })
             .catch(error => console.error('Error fetching city data:', error));
         } else {
             document.getElementById('kota-dropdown').innerHTML = '<option value="">Pilih Kota</option>';
+            document.getElementById('domain-dropdown').innerHTML = '<option value="">Pilih Domain</option>';
+            document.getElementById('domain-dropdown').disabled = true;
         }
     });
 
     document.getElementById('kota-dropdown').addEventListener('change', function() {
-        let cityCode = this.value;
+        const cityCode = this.value;
 
         if (cityCode) {
-            document.getElementById('domain-dropdown').disabled = false;
-            fetch('<?= site_url('/app/transaction/getTransactionsByCity') ?>', {
+            document.getElementById('domain-dropdown').disabled = false; // Enable domain dropdown
+            fetch(`${baseUrl}getTransactionsByCity`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': '<?= csrf_hash() ?>'
+                    'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify({ cityCode: cityCode })
             })
             .then(response => response.json())
             .then(data => {
-                let tableBody = document.getElementById('transaction-table').getElementsByTagName('tbody')[0];
-                tableBody.innerHTML = '';
                 localStorage.setItem('allTransactions', JSON.stringify(data));
-
-                if (data.length === 0) {
-                    let row = tableBody.insertRow();
-                    row.insertCell(0).colSpan = 6;
-                    row.innerHTML = 'Tidak ada data untuk kota yang dipilih.';
-                } else {
-                    data.forEach(function(transaction) {
-                        let row = tableBody.insertRow();
-                        row.insertCell(0).textContent = transaction.city_name;
-                        row.insertCell(1).textContent = transaction.indicator_id;
-                        row.insertCell(2).textContent = transaction.goal;
-                        row.insertCell(3).textContent = transaction.year_2019;
-                        row.insertCell(4).textContent = transaction.year_2020;
-
-                        let actionCell = row.insertCell(5);
-                        actionCell.innerHTML = `
-                            <a href="<?= site_url('/app/transaction/edit/') ?>${transaction.id}" class="btn btn-sm">Edit</a>
-                            <form action="<?= site_url('/app/transaction/delete/') ?>${transaction.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');" class="d-inline-block">
-                                <button type="submit" class="btn btn-sm">Hapus</button>
-                            </form>
-                        `;
-                    });
-                }
+                renderTable(data);
             })
             .catch(error => console.error('Error fetching transaction data:', error));
         } else {
-            // Disable dropdown "Domain" jika tidak ada kota yang dipilih
-            document.getElementById('domain-dropdown').disabled = true;
+            document.getElementById('domain-dropdown').disabled = true; // Disable if no city is selected
         }
     });
 
     document.getElementById('domain-dropdown').addEventListener('change', function() {
-        let domain = this.value;
-        let allTransactions = JSON.parse(localStorage.getItem('allTransactions')) || [];
+        const domain = this.value;
+        const allTransactions = JSON.parse(localStorage.getItem('allTransactions')) || [];
+        const filteredTransactions = domain ? 
+            allTransactions.filter(transaction => transaction.domain == domain) : 
+            allTransactions;
 
-        let tableBody = document.getElementById('transaction-table').getElementsByTagName('tbody')[0];
-        tableBody.innerHTML = ''; 
-
-        if (domain === "") {
-            allTransactions.forEach(function(transaction) {
-                let row = tableBody.insertRow();
-                row.insertCell(0).textContent = transaction.city_name;
-                row.insertCell(1).textContent = transaction.indicator_id;
-                row.insertCell(2).textContent = transaction.goal;
-                row.insertCell(3).textContent = transaction.year_2019;
-                row.insertCell(4).textContent = transaction.year_2020;
-
-                let actionCell = row.insertCell(5);
-                actionCell.innerHTML = `
-                    <a href="<?= site_url('/app/transaction/edit/') ?>${transaction.id}" class="btn btn-sm">Edit</a>
-                    <form action="<?= site_url('/app/transaction/delete/') ?>${transaction.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');" class="d-inline-block">
-                        <button type="submit" class="btn btn-sm">Hapus</button>
-                    </form>
-                `;
-            });
-        } else {
-            let filteredTransactions = allTransactions.filter(transaction => transaction.domain == domain);
-
-            if (filteredTransactions.length === 0) {
-                let row = tableBody.insertRow();
-                row.insertCell(0).colSpan = 6;
-                row.innerHTML = 'Tidak ada data untuk domain yang dipilih.';
-            } else {
-                filteredTransactions.forEach(function(transaction) {
-                    let row = tableBody.insertRow();
-                    row.insertCell(0).textContent = transaction.city_name;
-                    row.insertCell(1).textContent = transaction.indicator_id;
-                    row.insertCell(2).textContent = transaction.goal;
-                    row.insertCell(3).textContent = transaction.year_2019;
-                    row.insertCell(4).textContent = transaction.year_2020;
-
-                    let actionCell = row.insertCell(5);
-                    actionCell.innerHTML = `
-                        <a href="<?= site_url('/app/transaction/edit/') ?>${transaction.id}" class="btn btn-sm">Edit</a>
-                        <form action="<?= site_url('/app/transaction/delete/') ?>${transaction.id}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?');" class="d-inline-block">
-                            <button type="submit" class="btn btn-sm">Hapus</button>
-                        </form>
-                    `;
-                });
-            }
-        }
+        renderTable(filteredTransactions); // Use renderTable directly
     });
 
-    // Fungsi untuk menyimpan data di cookies
-    function setCookie(name, value, days) {
-        let expires = "";
-        if (days) {
-            let date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expires = "; expires=" + date.toUTCString();
-        }
-        document.cookie = name + "=" + (value || "") + expires + "; path=/";
-        console.log("Setting cookie:", document.cookie); // Untuk verifikasi
-    }
+    document.getElementById('refresh-button').addEventListener('click', function() {
+        // Reset dropdowns
+        document.getElementById('provinsi-dropdown').selectedIndex = 0;
+        document.getElementById('kota-dropdown').innerHTML = '<option value="">Pilih Kota</option>';
+        document.getElementById('domain-dropdown').innerHTML = '<option value="">Pilih Domain</option>';
+        document.getElementById('domain-dropdown').disabled = true;
 
+        // Reset table
+        const tableBody = document.getElementById('transaction-table').querySelector('tbody');
+        tableBody.innerHTML = '<tr><td colspan="6">Silakan pilih provinsi dan kota untuk melihat data.</td></tr>';
 
-    // Fungsi untuk mengambil nilai dari cookies
-    function getCookie(name) {
-        let nameEQ = name + "=";
-        let ca = document.cookie.split(';');
-        for(let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
-
-    // Menyimpan pilihan provinsi, kota, dan domain ke cookies saat ada perubahan
-    document.getElementById('provinsi-dropdown').addEventListener('change', function() {
-        setCookie('selectedProvince', this.value, 7);
+        // Clear local storage
+        localStorage.removeItem('allTransactions');
     });
-
-    document.getElementById('kota-dropdown').addEventListener('change', function() {
-        setCookie('selectedCity', this.value, 7);
-    });
-
-    document.getElementById('domain-dropdown').addEventListener('change', function() {
-        console.log("Domain selected:", this.value); // Untuk memastikan nilai domain terdeteksi
-        setCookie('selectedDomain', this.value, 7);
-        console.log("Cookie selectedDomain set to:", getCookie('selectedDomain')); // Verifikasi apakah cookie disimpan
-    });
-
-
-    // Fungsi untuk menetapkan pilihan sesuai dengan data di cookies
-    window.onload = async function() {
-        const selectedProvince = getCookie('selectedProvince');
-        const selectedCity = getCookie('selectedCity');
-        const selectedDomain = getCookie('selectedDomain');
-
-        try {
-            // Langkah 1: Set Provinsi dan muat data kota
-            if (selectedProvince) {
-                document.getElementById('provinsi-dropdown').value = selectedProvince;
-                await new Promise(resolve => {
-                    document.getElementById('provinsi-dropdown').addEventListener('change', resolve, { once: true });
-                    document.getElementById('provinsi-dropdown').dispatchEvent(new Event('change'));
-                });
-            }
-
-            // Langkah 2: Set Kota (pastikan data kota sudah dimuat)
-            if (selectedCity) {
-                await new Promise(resolve => setTimeout(resolve, 100)); // Tunggu data kota selesai dimuat
-                document.getElementById('kota-dropdown').value = selectedCity;
-                document.getElementById('kota-dropdown').dispatchEvent(new Event('change'));
-            }
-
-            // Langkah 3: Set Domain
-            if (selectedDomain) {
-                document.getElementById('domain-dropdown').value = selectedDomain;
-                document.getElementById('domain-dropdown').dispatchEvent(new Event('change'));
-            }
-        } catch (error) {
-            console.error('Error saat memuat pengaturan tersimpan:', error);
-        }
-    };
-
-    // Fungsi untuk menghapus cookies
-    function deleteCookie(name) {
-        document.cookie = name + '=; Max-Age=-99999999;';
-    }
-
-    // Bersihkan cookies saat tombol 'Simpan Perubahan' diklik
-    document.querySelector('form').addEventListener('submit', function() {
-        deleteCookie('selectedProvince');
-        deleteCookie('selectedCity');
-        deleteCookie('selectedDomain');
-    });
-
 </script>
 
 <?= $this->endSection() ?>

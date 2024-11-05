@@ -28,4 +28,29 @@ class TransactionModel extends Model
             'required' => 'Goal wajib diisi.'
         ]
     ];
+
+    public function getTransactionsWithGrowthRate($cityCode)
+    {
+        // Get transactions for the specified city
+        $transactions = $this->where('city_id', $cityCode)->findAll();
+
+        // Process the transactions to calculate growth rate
+        foreach ($transactions as &$transaction) {
+            $value2019 = $transaction['year_2019'];
+            $value2020 = $transaction['year_2020'];
+
+            // Calculate growth rate based on the polarity
+            if ($value2019 !== null && $value2020 !== null) {
+                if ($transaction['polaritas'] == 'negatif') {
+                    $transaction['growth_rate'] = $value2019 - $value2020;
+                } else {
+                    $transaction['growth_rate'] = $value2020 - $value2019;
+                }
+            } else {
+                $transaction['growth_rate'] = null; // Handle cases where values are missing
+            }
+        }
+
+        return $transactions;
+    }
 }

@@ -8,10 +8,28 @@ Edit Transaction
 <h2>Edit Transaction</h2>
 <div class="card">
     <div class="card-body">
+        <?php
+        // Initialize the variables for year-specific values
+        $value2019 = '';
+        $value2020 = '';
+
+        // Assuming $transaction['values'] contains an array of records with 'year' and 'value_fix'
+        if (isset($transaction['values']) && is_array($transaction['values'])) {
+            foreach ($transaction['values'] as $item) {
+                if ($item['year'] == 2019) {
+                    $value2019 = $item['value_fix'];
+                } elseif ($item['year'] == 2020) {
+                    $value2020 = $item['value_fix'];
+                }
+            }
+        }
+        ?>
+
         <!-- Form untuk mengedit data transaksi -->
         <form action="<?= site_url('/app/transaction/submit/') ?>" method="post">
             <?= csrf_field() ?>
-            <input type="hidden" name="id" value="<?=$transaction['id']?>">
+            <input type="hidden" name="id" value="<?= $transaction['id'] ?>">
+
             <!-- Input Nama Kota -->
             <div class="mb-3">
                 <label for="city_name" class="form-label">Nama Kota</label>
@@ -33,13 +51,13 @@ Edit Transaction
             <!-- Input Tahun 2019 -->
             <div class="mb-3">
                 <label for="year_2019" class="form-label">Tahun 2019</label>
-                <input type="text" class="form-control" id="year_2019" name="year_2019" value="<?= esc($transaction['year_2019']) ?>" required>
+                <input type="text" class="form-control" id="year_2019" name="year_2019" value="<?= esc($value2019) ?>" required>
             </div>
 
             <!-- Input Tahun 2020 -->
             <div class="mb-3">
                 <label for="year_2020" class="form-label">Tahun 2020</label>
-                <input type="text" class="form-control" id="year_2020" name="year_2020" value="<?= esc($transaction['year_2020']) ?>" required>
+                <input type="text" class="form-control" id="year_2020" name="year_2020" value="<?= esc($value2020) ?>" required>
             </div>
 
             <!-- Dropdown Domain -->

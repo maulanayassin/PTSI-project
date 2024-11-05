@@ -47,29 +47,35 @@ class Transaction extends Controller
         // Validasi data yang diterima
         if ($this->validate([
             'goal' => 'required',
-            'year_2019' => 'required', 
-            'year_2020' => 'required', 
             'domain' => 'required|in_list[1,2,3]', // Validasi domain harus salah satu dari pilihan yang ada
         ])) {
             // Cek apakah ID ada di database
             $row = $db->table('transaction')->where('id', $id)->get()->getRow();
-            
+
             // Jika tidak ada data dengan ID tersebut, berarti kita melakukan insert
             if ($row == null) {
+                // Ambil nilai dari tabel berdasarkan tahun 2019 dan 2020
+                $value2019 = $db->table('transaction')->where('year', 2019)->get()->getRow();
+                $value2020 = $db->table('transaction')->where('year', 2020)->get()->getRow();
+
                 $db->table('transaction')->insert([
                     'goal' => $this->request->getPost('goal'),
-                    'year_2019' => $this->request->getPost('year_2019'),
-                    'year_2020' => $this->request->getPost('year_2020'),
+                    'year_2019' => $value2019 ? $value2019->value : null, // Ambil nilai dari year = 2019
+                    'year_2020' => $value2020 ? $value2020->value : null, // Ambil nilai dari year = 2020
                     'domain' => $this->request->getPost('domain'),
                     'created_at' => date('Y-m-d H:i:s'), // Menambahkan timestamp saat data dibuat
                     'updated_at' => date('Y-m-d H:i:s'), // Menambahkan timestamp saat data diupdate
                 ]);
             } else {
                 // Jika ada, lakukan update
+                // Ambil nilai dari tabel berdasarkan tahun 2019 dan 2020
+                $value2019 = $db->table('transaction')->where('year', 2019)->get()->getRow();
+                $value2020 = $db->table('transaction')->where('year', 2020)->get()->getRow();
+
                 $db->table('transaction')->update([
                     'goal' => $this->request->getPost('goal'),
-                    'year_2019' => $this->request->getPost('year_2019'),
-                    'year_2020' => $this->request->getPost('year_2020'),
+                    'year_2019' => $value2019 ? $value2019->value : null, // Ambil nilai dari year = 2019
+                    'year_2020' => $value2020 ? $value2020->value : null, // Ambil nilai dari year = 2020
                     'domain' => $this->request->getPost('domain'),
                     'updated_at' => date('Y-m-d H:i:s'), // Update timestamp
                 ], [
@@ -87,14 +93,14 @@ class Transaction extends Controller
     }
 
 
+
     public function edit($id)
     {
-        $data['transaction'] = $this->transactionModel->find($id); // Change to 'transaction'
+        $data['transaction'] = $this->transactionModel->find($id);
         if (!$data['transaction']) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException("Data transaksi dengan ID $id tidak ditemukan");
         }
 
-        // Ambil data provinsi untuk dropdown
         $data['provinsi'] = $this->provinceModel->findAll();
 
         return view('app/transaction_form', $data);
