@@ -1,82 +1,78 @@
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('title') ?>
-Edit Transaction
+Transaction Form
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<h2>Edit Transaction</h2>
+<h2>Edit Transaksi</h2>
 <div class="card">
     <div class="card-body">
-        <?php
-        // Initialize the variables for year-specific values
-        $value2019 = '';
-        $value2020 = '';
-
-        // Assuming $transaction['values'] contains an array of records with 'year' and 'value_fix'
-        if (isset($transaction['values']) && is_array($transaction['values'])) {
-            foreach ($transaction['values'] as $item) {
-                if ($item['year'] == 2019) {
-                    $value2019 = $item['value_fix'];
-                } elseif ($item['year'] == 2020) {
-                    $value2020 = $item['value_fix'];
-                }
-            }
-        }
-        ?>
-
-        <!-- Form untuk mengedit data transaksi -->
+        <!-- Form untuk membuat atau memperbarui transaksi -->
         <form action="<?= site_url('/app/transaction/submit/') ?>" method="post">
             <?= csrf_field() ?>
-            <input type="hidden" name="id" value="<?= $transaction['id'] ?>">
 
-            <!-- Input Nama Kota -->
+            <!-- Hidden input untuk menyimpan ID transaksi jika sudah ada -->
+            <input type="hidden" name="id" value="<?= isset($transaction['id']) ? $transaction['id'] : '' ?>">
+
+            <!-- Input Nama Kota (readonly, untuk keperluan tampilan saja) -->
             <div class="mb-3">
                 <label for="city_name" class="form-label">Nama Kota</label>
-                <input type="text" class="form-control" id="city_name" name="city_name" value="<?= esc($transaction['city_name']) ?>" readonly>
+                <input type="text" class="form-control" id="city_name" name="city_name" 
+                       value="<?= isset($transaction['city_name']) ? esc($transaction['city_name']) : '' ?>" 
+                       readonly>
             </div>
 
-            <!-- Input No Indikator -->
+            <!-- Input No. Indikator (readonly, untuk keperluan tampilan saja) -->
             <div class="mb-3">
                 <label for="indicator_id" class="form-label">No. Indikator</label>
-                <input type="text" class="form-control" id="indicator_id" name="indicator_id" value="<?= esc($transaction['indicator_id']) ?>" readonly>
+                <input type="text" class="form-control" id="indicator_id" name="indicator_id" 
+                       value="<?= isset($transaction['indicator_id']) ? esc($transaction['indicator_id']) : '' ?>" 
+                       readonly>
             </div>
 
-            <!-- Input Goal -->
+            <!-- Input Goal (wajib diisi) -->
             <div class="mb-3">
                 <label for="goal" class="form-label">Goal</label>
-                <input type="text" class="form-control" id="goal" name="goal" value="<?= esc($transaction['goal']) ?>" required>
+                <input type="text" class="form-control" id="goal" name="goal" 
+                       value="<?= isset($transaction['goal']) ? esc($transaction['goal']) : '' ?>" 
+                       required>
             </div>
 
-            <!-- Input Tahun 2019 -->
             <div class="mb-3">
                 <label for="year_2019" class="form-label">Tahun 2019</label>
-                <input type="text" class="form-control" id="year_2019" name="year_2019" value="<?= esc($value2019) ?>" required>
+                <input type="number" class="form-control" name="year_2019" id="year_2019"
+                       value="<?= isset($transaction['year_2019']) ? esc($transaction['year_2019']) : '' ?>">
             </div>
 
-            <!-- Input Tahun 2020 -->
             <div class="mb-3">
                 <label for="year_2020" class="form-label">Tahun 2020</label>
-                <input type="text" class="form-control" id="year_2020" name="year_2020" value="<?= esc($value2020) ?>" required>
+                <input type="number" class="form-control" name="year_2020" id="year_2020"
+                       value="<?= isset($transaction['year_2020']) ? esc($transaction['year_2020']) : '' ?>">
             </div>
 
-            <!-- Dropdown Domain -->
+            <div class="mb-3">
+                <label for="growth_rate" class="form-label">Growth Rate</label>
+                <input type="text" class="form-control" name="growth_rate" id="growth_rate"
+                       value="<?= esc($transaction['growth_rate']) ?>" readonly>
+            </div>
+
+            <!-- Dropdown Domain (wajib diisi) -->
             <div class="mb-3">
                 <label for="domain" class="form-label">Domain</label>
                 <select class="form-select" id="domain" name="domain" required>
-                    <option value="1" <?= $transaction['domain'] == 1 ? 'selected' : '' ?>>Domain 1</option>
-                    <option value="2" <?= $transaction['domain'] == 2 ? 'selected' : '' ?>>Domain 2</option>
-                    <option value="3" <?= $transaction['domain'] == 3 ? 'selected' : '' ?>>Domain 3</option>
+                    <option value="1" <?= isset($transaction['domain']) && $transaction['domain'] == 1 ? 'selected' : '' ?>>Domain 1</option>
+                    <option value="2" <?= isset($transaction['domain']) && $transaction['domain'] == 2 ? 'selected' : '' ?>>Domain 2</option>
+                    <option value="3" <?= isset($transaction['domain']) && $transaction['domain'] == 3 ? 'selected' : '' ?>>Domain 3</option>
                 </select>
             </div>
 
-            <!-- Submit Button -->
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <!-- Submit dan Cancel Button -->
+            <div class="mb-3 text-end">
+                <button type="submit" class="btn btn-primary">Simpan</button>
                 <a href="<?= site_url('/app/transaction') ?>" class="btn btn-secondary">Batal</a>
             </div>
         </form>
     </div>
 </div>
-
 <?= $this->endSection() ?>

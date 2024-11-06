@@ -42,6 +42,9 @@ Provinsi
                     <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"></path>
                     <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path>
                 </svg>Refresh</button>
+            <button id="process-button" class="btn btn-success">
+                Proses
+            </button>
         </div>
     </div>
     <div class="card-body">
@@ -60,7 +63,7 @@ Provinsi
                 </thead>
                 <tbody>
                 <tr>
-                    <td colspan="6">Silakan pilih provinsi dan kota untuk melihat data.</td>
+                    <td colspan="7">Silakan pilih provinsi dan kota untuk melihat data.</td>
                 </tr>
                 </tbody>
             </table>
@@ -203,6 +206,32 @@ Provinsi
         // Clear local storage
         localStorage.removeItem('allTransactions');
     });
+
+    document.getElementById('process-button').addEventListener('click', function() {
+        const allTransactions = JSON.parse(localStorage.getItem('allTransactions')) || [];
+
+        // Kirim data ke server untuk diproses
+        fetch(`${baseUrl}processTransactions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ transactions: allTransactions })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Data berhasil diproses!');
+                renderTable(data.transactions); // Tampilkan data yang sudah diproses
+            } else {
+                alert('Gagal memproses data.');
+            }
+        })
+        .catch(error => console.error('Error processing transaction data:', error));
+    });
+
 </script>
 
 <?= $this->endSection() ?>
