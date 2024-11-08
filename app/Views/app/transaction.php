@@ -53,7 +53,7 @@ Provinsi
                         <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path></svg>
                 <i class="bi bi-arrow-repeat"></i> Refresh
             </button>
-            <button id="edit-button" class="btn btn-secondary me-2">
+            <!-- <button id="edit-button" class="btn btn-secondary me-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path>
@@ -61,10 +61,20 @@ Provinsi
                         <path d="M16 19h6"></path>
                         <path d="M19 16v6"></path></svg>
                 <i class="bi bi-arrow-repeat"></i> Edit
-            </button>
-            <button id="process-button" class="btn btn-success">
+            </button> -->
+            <a href="<?= isset($transaction['id']) ? site_url('/app/transaction/edit/' . $transaction['id']) : '#' ?>" class="btn btn-secondary me-2" <?= isset($transaction['id']) ? '' : 'disabled' ?>>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path>
+                    <path d="M13.5 6.5l4 4"></path>
+                    <path d="M16 19h6"></path>
+                    <path d="M19 16v6"></path>
+                </svg>Edit
+            </a>
+             <a href="<?= isset($transaction) ? site_url('/app/transaction/form/' . $transaction['id']) : '#' ?>" class="btn btn-success" <?= isset($transaction) ? '' : 'disabled' ?>>Create New</a>
+            <!-- <button id="process-button" class="btn btn-success">
                 <i class="bi bi-plus-circle"></i> Create New
-            </button>
+            </button> -->
         </div>
     </div>
 </div>
@@ -84,7 +94,7 @@ Provinsi
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="5" class="text-center">Silakan pilih provinsi, kota, dan tahun untuk melihat data.</td>
+                        <td colspan="5" class="text-center">Silahkan pilih provinsi, kota, dan tahun untuk melihat data.</td>
                     </tr>
                 </tbody>
             </table>
@@ -106,13 +116,11 @@ Provinsi
         });
     }
 
-    function renderTable(data, selectedYear) {
+    function renderTable(data) {
         const tableBody = document.getElementById('transaction-table').getElementsByTagName('tbody')[0];
         tableBody.innerHTML = ''; // Clear existing rows
 
-        let filteredData = data.filter(transaction => transaction.year === selectedYear);
-
-        if (filteredData.length === 0) {
+        if (data.length === 0) {
             let row = tableBody.insertRow();
             let cell = row.insertCell(0);
             cell.colSpan = 5;
@@ -121,13 +129,13 @@ Provinsi
             return;
         }
 
-        filteredData.forEach(function(transaction) {
+        data.forEach(function(transaction) {
             let row = tableBody.insertRow();
             row.insertCell(0).textContent = transaction.city_name;
             row.insertCell(1).textContent = transaction.indicator_id;
             row.insertCell(2).textContent = transaction.goal;
             row.insertCell(3).textContent = transaction.value_fix !== null ? transaction.value_fix : '-';
-            row.insertCell(4).textContent = transaction.growth_rate !== null ? transaction.growth_rate : '-';
+            row.insertCell(4).textContent = transaction.growth !== null ? transaction.growth : '-';
         });
     }
 
@@ -153,46 +161,61 @@ Provinsi
 
     document.getElementById('kota-dropdown').addEventListener('change', function() {
         const cityCode = this.value;
-        if (cityCode) {
-            document.getElementById('domain-dropdown').disabled = false;
-            fetch(`${baseUrl}getTransactionsByCity`, {
-                method: 'POST',
+        const year = document.getElementById('tahun-dropdown').value;
+        const domain = document.getElementById('domain-dropdown').value;
+        const provinceCode = document.getElementById('provinsi-dropdown').value;
+
+        if (cityCode && year && domain) {
+            fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
+                method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
                     'X-CSRF-TOKEN': csrfToken
-                },
-                body: JSON.stringify({ cityCode: cityCode })
+                }
             })
             .then(response => response.json())
-            .then(data => {
-                localStorage.setItem('allTransactions', JSON.stringify(data));
-                const selectedYear = document.getElementById('tahun-dropdown').value;
-                renderTable(data, selectedYear);
-            })
+            .then(data => renderTable(data))
             .catch(error => console.error('Error fetching transaction data:', error));
         }
     });
 
     document.getElementById('tahun-dropdown').addEventListener('change', function() {
-        const selectedYear = this.value;
-        const allTransactions = JSON.parse(localStorage.getItem('allTransactions')) || [];
-        renderTable(allTransactions, selectedYear);
+        const year = this.value;
+        const cityCode = document.getElementById('kota-dropdown').value;
+        const domain = document.getElementById('domain-dropdown').value;
+        const provinceCode = document.getElementById('provinsi-dropdown').value;
+
+        if (cityCode && year && domain) {
+            fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => renderTable(data))
+            .catch(error => console.error('Error fetching transaction data:', error));
+        }
     });
 
     document.getElementById('domain-dropdown').addEventListener('change', function() {
         const domain = this.value;
-        const allTransactions = JSON.parse(localStorage.getItem('allTransactions')) || [];
+        const cityCode = document.getElementById('kota-dropdown').value;
+        const year = document.getElementById('tahun-dropdown').value;
+        const provinceCode = document.getElementById('provinsi-dropdown').value;
 
-        // Filter data berdasarkan domain yang dipilih
-        const filteredTransactions = domain ? 
-            allTransactions.filter(transaction => transaction.domain === domain) : 
-            allTransactions;
-
-        // Render tabel dengan data yang difilter
-        const selectedYear = document.getElementById('tahun-dropdown').value;
-        renderTable(filteredTransactions, selectedYear);
+        if (cityCode && year && domain) {
+            fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => renderTable(data))
+            .catch(error => console.error('Error fetching transaction data:', error));
+        }
     });
+
 
     document.getElementById('refresh-button').addEventListener('click', function() {
         document.getElementById('provinsi-dropdown').selectedIndex = 0;
@@ -200,9 +223,9 @@ Provinsi
         document.getElementById('domain-dropdown').innerHTML = '<option value="">Pilih Domain</option>';
         document.getElementById('domain-dropdown').disabled = true;
         const tableBody = document.getElementById('transaction-table').querySelector('tbody');
-        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Silakan pilih provinsi dan kota untuk melihat data.</td></tr>';
-        localStorage.removeItem('allTransactions');
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Silahkan pilih provinsi, kota, dan tahun untuk melihat data.</td></tr>';
     });
+
 </script>
 
 <?= $this->endSection() ?>

@@ -20,6 +20,7 @@ class Transaction extends Controller
         $this->cityModel = new CityModel();
     }
 
+    // Main index function for displaying transaction data
     public function index()
     {
         $data['transaksi'] = [];
@@ -27,6 +28,7 @@ class Transaction extends Controller
         return view('app/transaction', $data);
     }
 
+    // Function to display form for adding or editing a transaction
     public function form($id = null)
     {
         $data = [];
@@ -36,47 +38,50 @@ class Transaction extends Controller
             if (!$data['transaction']) {
                 throw new \CodeIgniter\Exceptions\PageNotFoundException("Data transaksi dengan ID $id tidak ditemukan");
             }
+        } else {
+            $data['transaction'] = []; // Initialize as an empty array if adding a new transaction
         }
 
-        $data['provinsi'] = $this->provinceModel->findAll(); // Menambahkan data provinsi untuk dropdown
+        $data['provinsi'] = $this->provinceModel->findAll();
         return view('app/transaction_form', $data);
     }
 
+    // Function to submit transaction data (insert or update)
     public function submit()
     {
-        $id = $this->request->getPost('id'); // Mengambil ID dari form
+        $id = $this->request->getPost('id');
 
         if ($this->validate([
             'goal' => 'required',
-            'domain' => 'required|in_list[1,2,3]', // Validasi domain harus salah satu dari pilihan yang ada
+            'domain' => 'required|in_list[1,2,3]', // Validate 'domain' must be one of the listed values
         ])) {
             $db = \Config\Database::connect();
 
-            // Ambil nilai tahun 2019 dan 2020 dari tabel
+            // Retrieve values for 2019 and 2020 from the transaction table
             $value2019 = $db->table('transaction')->where('year', 2019)->get()->getRow();
             $value2020 = $db->table('transaction')->where('year', 2020)->get()->getRow();
 
-            // Hitung growth_rate
+            // Calculate growth rate
             $growth_rate = null;
             if ($value2019 && $value2020) {
                 $growth_rate = abs($value2019->value - $value2020->value);
             }
 
-            // Simpan atau update data transaksi
+            // Data to save or update
             $data = [
                 'goal' => $this->request->getPost('goal'),
                 'year_2019' => $value2019 ? $value2019->value : null,
                 'year_2020' => $value2020 ? $value2020->value : null,
-                'growth_rate' => $growth_rate, // Simpan nilai growth_rate
+                'growth_rate' => $growth_rate,
                 'domain' => $this->request->getPost('domain'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
 
             if ($id) {
-                // Update data transaksi
+                // Update existing transaction
                 $this->transactionModel->update($id, $data);
             } else {
-                // Insert new data transaksi
+                // Insert new transaction
                 $data['created_at'] = date('Y-m-d H:i:s');
                 $this->transactionModel->save($data);
             }
@@ -87,17 +92,26 @@ class Transaction extends Controller
         return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
     }
 
+    // Function to edit a transaction by ID
     public function edit($id)
     {
-        return $this->form($id);
+        $data['transaction'] = $this->transactionModel->find($id);
+
+        if (!$data['transaction']) {
+            return redirect()->to('/app/transaction')->with('error', 'Data tidak ditemukan');
+        }
+
+        return view('app/transaction_form', $data);
     }
 
+    // Function to delete a transaction by ID
     public function delete($id)
     {
         $this->transactionModel->delete($id);
         return redirect()->to('/app/transaction')->with('success', 'Data berhasil dihapus.');
     }
 
+    // Function to get transactions based on city code (AJAX request)
     public function getTransactionsByCity()
     {
         $request = $this->request->getJSON();
@@ -106,6 +120,7 @@ class Transaction extends Controller
         return $this->response->setJSON($transactions);
     }
 
+    // Function to get cities based on province code (AJAX request)
     public function getCities()
     {
         $request = $this->request->getJSON();
@@ -119,6 +134,7 @@ class Transaction extends Controller
         return $this->response->setJSON($cities);
     }
 
+    // Function to get transactions by city and domain (AJAX request)
     public function getTransactionsByCityAndDomain()
     {
         if ($this->request->isAJAX()) {
@@ -132,5 +148,26 @@ class Transaction extends Controller
 
             return $this->response->setJSON($transactions);
         }
+    }
+    // Function to fetch transaction data based on year and city name
+    public function processGrowth($year, $city_name, $province_code, $domain_id)
+    {
+        $db = \Config\Database::connect();
+        
+        $sql = "
+            SELECT t.year, t.province_id, t.city_id, t.city_name, t.indicator_id, t.goal, t.domain, t.value_fix, t.polaritas,
+            (SELECT MAX(value_fix) FROM transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) AS value_sebelumnya,
+            CASE WHEN t.polaritas = 'Negatif' THEN (SELECT MAX(value_fix) FROM transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) - t.value_fix
+            ELSE 
+            t.value_fix - (SELECT MAX(value_fix) FROM transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) END AS growth
+            FROM transaction t
+            WHERE t.province_id = ? 
+            AND t.city_name LIKE ? 
+            AND t.year = ? 
+            AND t.domain = ?";
+        
+        $query = $db->query($sql, [$province_code, '%' . $city_name . '%', $year, $domain_id]);
+        
+        return $this->response->setJSON($query->getResult());
     }
 }

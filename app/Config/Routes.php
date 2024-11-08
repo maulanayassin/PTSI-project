@@ -46,6 +46,8 @@ $routes->group('app', ['filter' => 'auth'], function($routes) {
     $routes->post('transaction/getCities', 'App\Transaction::getCities');
     $routes->post('transaction/getTransactionsByCity', 'App\Transaction::getTransactionsByCity');
     $routes->post('transaction/getTransactionsByCityAndDomain', 'Transaction::getTransactionsByCityAndDomain');
+    $routes->get('transaction/processGrowth/(:num)/(:any)/(:any)/(:num)', 'TransactionController::processGrowth/$1/$2/$3/$4');
+
 
    
     
