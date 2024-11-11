@@ -95,15 +95,16 @@ class Transaction extends Controller
     // Function to edit a transaction by ID
     public function edit($id)
     {
-        $db = \Config\Database::connect();
+         $db = \Config\Database::connect();
         // Mengambil data berdasarkan ID
-        $data['record_indicator'] = $db->table('transaction')->where('id', $id)->get()->getRow();
+        $data['record_indicator'] = $db->table('indicator')->where('id', $id)->get()->getRow();
         
-        // Cek jika data ditemukan
-        if (!$data['record_indicator']) {
-            return redirect()->to('/app/transaction')->with('error', 'Data tidak ditemukan');
+        // Jika transaksi tidak ditemukan, kembalikan ke halaman sebelumnya dengan pesan error
+        if (!$data['record_transaction']) {
+            return redirect()->back()->with('error', 'Data transaksi tidak ditemukan');
         }
-        // Menampilkan form edit dengan data yang diambil
+        
+        // Kirim data transaksi ke view untuk ditampilkan dalam form edit
         return view('app/transaction_form', $data);
     }
 

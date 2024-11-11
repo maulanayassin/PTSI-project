@@ -40,14 +40,14 @@ $routes->group('app', ['filter' => 'auth'], function($routes) {
     // $routes->post('/app/transaction/selectCity', 'App\Transaction::selectCity'); 
     $routes->get('transaction/form', 'App\Transaction::form'); 
     // $routes->post('/app/transaction/form', 'App\Transaction::submit'); 
-    $routes->get('transaction/edit/(:num)', 'App\Transaction::edit/$1'); 
+    $routes->get('transaction/edit/(:num)', 'App\Transaction::edit/$1');
     $routes->post('transaction/delete/(:num)', 'App\Transaction::delete/$1');
     $routes->post('transaction/submit/', 'App\Transaction::submit');
     $routes->post('transaction/getCities', 'App\Transaction::getCities');
     $routes->post('transaction/getTransactionsByCity', 'App\Transaction::getTransactionsByCity');
     $routes->post('transaction/getTransactionsByCityAndDomain', 'App\Transaction::getTransactionsByCityAndDomain');
     $routes->get('transaction/processGrowth/(:num)/(:num)/(:num)/(:num)', 'App\Transaction::processGrowth/$1/$2/$3/$4');
-    $routes->get('test', 'App\Transaction::processGrowth/2020/1101/11/1');
+    // $routes->get('test', 'App\Transaction::processGrowth/2020/1101/11/1');
 
    
     

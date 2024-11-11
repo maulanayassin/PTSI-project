@@ -128,22 +128,17 @@ Provinsi
             row.insertCell(2).textContent = transaction.goal;
             row.insertCell(3).textContent = transaction.value_fix !== null ? transaction.value_fix : '-';
             row.insertCell(4).textContent = transaction.growth_rate !== null ? transaction.growth_rate : '-';
-              // Tambahkan cell untuk tombol "Edit"
             let editCell = row.insertCell(5);
-
-            // Tentukan URL untuk tombol "Edit"
-            let editUrl = transaction.id ? `/app/transaction/edit/${transaction.id}` : null;
-            editCell.innerHTML = editUrl 
-                ? `<a href="${editUrl}" class="btn btn-sm">Edit</a>` 
-                : `<button class="btn btn-sm">Edit</button>`;
-
-
-            // Buat tombol "Edit" dengan kondisi aktif atau dinonaktifkan
-            // editCell.innerHTML = `
-            //     <a href="${editUrl}" class="btn btn-sm" ${transaction.id}>Edit</a>
-            // `;
+            if (transaction.id) {
+            // Hanya tampilkan tombol jika `transaction.id` ada
+                let editUrl = `${baseUrl}edit/${transaction.id}`;
+                editCell.innerHTML = `<a href="${editUrl}" class="btn btn-sm btn-primary">Edit</a>`;
+            } else {
+                editCell.innerHTML = `<button class="btn btn-sm btn-secondary">Edit</button>`;
+            }
         });
     }
+
 
     document.getElementById('provinsi-dropdown').addEventListener('change', function() {
         const provinceCode = this.value;
