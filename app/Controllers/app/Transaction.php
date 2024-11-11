@@ -95,12 +95,15 @@ class Transaction extends Controller
     // Function to edit a transaction by ID
     public function edit($id)
     {
-        $data['transaction'] = $this->transactionModel->find($id);
-
-        if (!$data['transaction']) {
+        $db = \Config\Database::connect();
+        // Mengambil data berdasarkan ID
+        $data['record_indicator'] = $db->table('transaction')->where('id', $id)->get()->getRow();
+        
+        // Cek jika data ditemukan
+        if (!$data['record_indicator']) {
             return redirect()->to('/app/transaction')->with('error', 'Data tidak ditemukan');
         }
-
+        // Menampilkan form edit dengan data yang diambil
         return view('app/transaction_form', $data);
     }
 
@@ -150,23 +153,27 @@ class Transaction extends Controller
         }
     }
     // Function to fetch transaction data based on year and city name
-    public function processGrowth($year, $city_name, $province_code, $domain_id)
+    public function processGrowth($year, $city_id, $province_id, $domain_id)
     {
         $db = \Config\Database::connect();
         
         $sql = "
-            SELECT t.year, t.province_id, t.city_id, t.city_name, t.indicator_id, t.goal, t.domain, t.value_fix, t.polaritas,
-            (SELECT MAX(value_fix) FROM transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) AS value_sebelumnya,
-            CASE WHEN t.polaritas = 'Negatif' THEN (SELECT MAX(value_fix) FROM transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) - t.value_fix
+            SELECT t.year, t.province_id, t.city_id, t.city_name,i.indicator_name, t.indicator_id, t.goal, t.domain, t.value_fix, t.polaritas,
+            (SELECT MAX(value_fix) FROM sdg_ptsi.transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) AS value_sebelumnya,
+            CASE WHEN t.polaritas = 'Negatif' THEN (SELECT MAX(value_fix) FROM sdg_ptsi.transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) - t.value_fix
             ELSE 
-            t.value_fix - (SELECT MAX(value_fix) FROM transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) END AS growth
-            FROM transaction t
-            WHERE t.province_id = ? 
-            AND t.city_name LIKE ? 
-            AND t.year = ? 
-            AND t.domain = ?";
-        
-        $query = $db->query($sql, [$province_code, '%' . $city_name . '%', $year, $domain_id]);
+            t.value_fix - (SELECT MAX(value_fix) FROM sdg_ptsi.transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) END AS growth_rate
+            FROM sdg_ptsi.transaction t 
+            LEFT OUTER JOIN sdg_ptsi.`indicator` i ON t.indicator_id = i.no_indicator
+            WHERE t.province_id = ?
+            AND t.city_id = ?
+            AND t.year = ?
+            AND t.domain = ?"; 
+        // echo $sql;
+        // echo $year."".$city_id."".$province_id."".$domain_id."";
+        $query = $db->query($sql, [$province_id,  $city_id, $year, $domain_id]);
+        // $query = $db->query($sql);
+        // var_dump($query);
         
         return $this->response->setJSON($query->getResult());
     }

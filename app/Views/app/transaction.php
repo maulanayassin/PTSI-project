@@ -37,7 +37,7 @@ Provinsi
             </div>
             <div class="col-md-3 mb-3">
                 <label for="domain-dropdown" class="form-label">Pilih Domain</label>
-                <select class="form-select" name="domain" id="domain-dropdown" required disabled>
+                <select class="form-select" name="domain" id="domain-dropdown" required>
                     <option value="">Pilih Domain</option>
                     <option value="1">Domain 1</option>
                     <option value="2">Domain 2</option>
@@ -62,15 +62,6 @@ Provinsi
                         <path d="M19 16v6"></path></svg>
                 <i class="bi bi-arrow-repeat"></i> Edit
             </button> -->
-            <a href="<?= isset($transaction['id']) ? site_url('/app/transaction/edit/' . $transaction['id']) : '#' ?>" class="btn btn-secondary me-2" <?= isset($transaction['id']) ? '' : 'disabled' ?>>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path>
-                    <path d="M13.5 6.5l4 4"></path>
-                    <path d="M16 19h6"></path>
-                    <path d="M19 16v6"></path>
-                </svg>Edit
-            </a>
              <a href="<?= isset($transaction) ? site_url('/app/transaction/form/' . $transaction['id']) : '#' ?>" class="btn btn-success" <?= isset($transaction) ? '' : 'disabled' ?>>Create New</a>
             <!-- <button id="process-button" class="btn btn-success">
                 <i class="bi bi-plus-circle"></i> Create New
@@ -85,16 +76,17 @@ Provinsi
             <table class="table table-bordered table-striped table-hover" id="transaction-table">
                 <thead class="table-dark">
                     <tr>
-                        <th>Nama Kota</th>
+                        <th>Nama Indikator</th>
                         <th>No. Indikator</th>
                         <th>Goal</th>
                         <th>Nilai</th>
                         <th>Growth Rate</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="5" class="text-center">Silahkan pilih provinsi, kota, dan tahun untuk melihat data.</td>
+                        <td colspan="6" class="text-center">Silahkan pilih provinsi, kota, dan tahun untuk melihat data.</td>
                     </tr>
                 </tbody>
             </table>
@@ -123,7 +115,7 @@ Provinsi
         if (data.length === 0) {
             let row = tableBody.insertRow();
             let cell = row.insertCell(0);
-            cell.colSpan = 5;
+            cell.colSpan = 6;
             cell.classList.add('text-center');
             cell.textContent = 'Tidak ada data untuk tahun yang dipilih.';
             return;
@@ -131,11 +123,25 @@ Provinsi
 
         data.forEach(function(transaction) {
             let row = tableBody.insertRow();
-            row.insertCell(0).textContent = transaction.city_name;
+            row.insertCell(0).textContent = transaction.indicator_name;
             row.insertCell(1).textContent = transaction.indicator_id;
             row.insertCell(2).textContent = transaction.goal;
             row.insertCell(3).textContent = transaction.value_fix !== null ? transaction.value_fix : '-';
-            row.insertCell(4).textContent = transaction.growth !== null ? transaction.growth : '-';
+            row.insertCell(4).textContent = transaction.growth_rate !== null ? transaction.growth_rate : '-';
+              // Tambahkan cell untuk tombol "Edit"
+            let editCell = row.insertCell(5);
+
+            // Tentukan URL untuk tombol "Edit"
+            let editUrl = transaction.id ? `/app/transaction/edit/${transaction.id}` : null;
+            editCell.innerHTML = editUrl 
+                ? `<a href="${editUrl}" class="btn btn-sm">Edit</a>` 
+                : `<button class="btn btn-sm">Edit</button>`;
+
+
+            // Buat tombol "Edit" dengan kondisi aktif atau dinonaktifkan
+            // editCell.innerHTML = `
+            //     <a href="${editUrl}" class="btn btn-sm" ${transaction.id}>Edit</a>
+            // `;
         });
     }
 
@@ -159,73 +165,97 @@ Provinsi
         }
     });
 
-    document.getElementById('kota-dropdown').addEventListener('change', function() {
-        const cityCode = this.value;
-        const year = document.getElementById('tahun-dropdown').value;
-        const domain = document.getElementById('domain-dropdown').value;
-        const provinceCode = document.getElementById('provinsi-dropdown').value;
+    // document.getElementById('kota-dropdown').addEventListener('change', function() {
+    //     const cityCode = this.value;
+    //     const year = document.getElementById('tahun-dropdown').value;
+    //     const domain = document.getElementById('domain-dropdown').value;
+    //     const provinceCode = document.getElementById('provinsi-dropdown').value;
 
-        if (cityCode && year && domain) {
-            fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                }
-            })
-            .then(response => response.json())
-            .then(data => renderTable(data))
-            .catch(error => console.error('Error fetching transaction data:', error));
-        }
-    });
+    //     if (cityCode && year && domain) {
+    //         fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'X-CSRF-TOKEN': csrfToken
+    //             }
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => renderTable(data))
+    //         .catch(error => console.error('Error fetching transaction data:', error));
+    //     }
+    // });
 
-    document.getElementById('tahun-dropdown').addEventListener('change', function() {
-        const year = this.value;
-        const cityCode = document.getElementById('kota-dropdown').value;
-        const domain = document.getElementById('domain-dropdown').value;
-        const provinceCode = document.getElementById('provinsi-dropdown').value;
+    // document.getElementById('tahun-dropdown').addEventListener('change', function() {
+    //     const year = this.value;
+    //     const cityCode = document.getElementById('kota-dropdown').value;
+    //     const domain = document.getElementById('domain-dropdown').value;
+    //     const provinceCode = document.getElementById('provinsi-dropdown').value;
 
-        if (cityCode && year && domain) {
-            fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                }
-            })
-            .then(response => response.json())
-            .then(data => renderTable(data))
-            .catch(error => console.error('Error fetching transaction data:', error));
-        }
-    });
+    //     if (cityCode && year && domain) {
+    //         fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'X-CSRF-TOKEN': csrfToken
+    //             }
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => renderTable(data))
+    //         .catch(error => console.error('Error fetching transaction data:', error));
+    //     }
+    // });
 
-    document.getElementById('domain-dropdown').addEventListener('change', function() {
-        const domain = this.value;
-        const cityCode = document.getElementById('kota-dropdown').value;
-        const year = document.getElementById('tahun-dropdown').value;
-        const provinceCode = document.getElementById('provinsi-dropdown').value;
+    // document.getElementById('domain-dropdown').addEventListener('change', function() {
+    //     const domain = this.value;
+    //     const cityCode = document.getElementById('kota-dropdown').value;
+    //     const year = document.getElementById('tahun-dropdown').value;
+    //     const provinceCode = document.getElementById('provinsi-dropdown').value;
 
-        if (cityCode && year && domain) {
-            fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                }
-            })
-            .then(response => response.json())
-            .then(data => renderTable(data))
-            .catch(error => console.error('Error fetching transaction data:', error));
-        }
-    });
+    //     if (cityCode && year && domain) {
+    //         fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'X-CSRF-TOKEN': csrfToken
+    //             }
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => renderTable(data))
+    //         .catch(error => console.error('Error fetching transaction data:', error));
+    //     }
+    // });
 
 
     document.getElementById('refresh-button').addEventListener('click', function() {
-        document.getElementById('provinsi-dropdown').selectedIndex = 0;
-        document.getElementById('kota-dropdown').innerHTML = '<option value="">Pilih Kota</option>';
-        document.getElementById('domain-dropdown').innerHTML = '<option value="">Pilih Domain</option>';
-        document.getElementById('domain-dropdown').disabled = true;
-        const tableBody = document.getElementById('transaction-table').querySelector('tbody');
-        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Silahkan pilih provinsi, kota, dan tahun untuk melihat data.</td></tr>';
-    });
+        // document.getElementById('provinsi-dropdown').selectedIndex = 0;
+        // document.getElementById('kota-dropdown').innerHTML = '<option value="">Pilih Kota</option>';
+        // document.getElementById('domain-dropdown').innerHTML = '<option value="">Pilih Domain</option>';
+        // document.getElementById('domain-dropdown').disabled = true;
+        // const tableBody = document.getElementById('transaction-table').querySelector('tbody');
+        // tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Silahkan pilih provinsi, kota, dan tahun untuk melihat data.</td></tr>';
+        // localStorage.removeItem('allTransactions');
+        const domain = document.getElementById('domain-dropdown').value;
+        const cityCode = document.getElementById('kota-dropdown').value;
+        const year = document.getElementById('tahun-dropdown').value;
+        const provinceCode = document.getElementById('provinsi-dropdown').value;
 
+        console.log(domain + '-' + cityCode + '-' + provinceCode + '-' + year);
+        console.log(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`);
+        if (cityCode && year && domain) {
+            fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                // console.log(data);
+                renderTable(data);
+            })
+            .catch(error => console.error('Error fetching transaction data:', error));
+        }
+    });
 </script>
 
 <?= $this->endSection() ?>
