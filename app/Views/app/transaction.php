@@ -62,7 +62,7 @@ Provinsi
                         <path d="M19 16v6"></path></svg>
                 <i class="bi bi-arrow-repeat"></i> Edit
             </button> -->
-             <a href="<?= isset($transaction) ? site_url('/app/transaction/form/' . $transaction['id']) : '#' ?>" class="btn btn-success" <?= isset($transaction) ? '' : 'disabled' ?>>Create New</a>
+             <a href="<?= site_url('/app/transaction/form/' . (isset($transaction['id']) ? $transaction['id'] : '')) ?>" class="btn btn-success">Create New</a>
             <!-- <button id="process-button" class="btn btn-success">
                 <i class="bi bi-plus-circle"></i> Create New
             </button> -->
@@ -129,8 +129,8 @@ Provinsi
             row.insertCell(3).textContent = transaction.value_fix !== null ? transaction.value_fix : '-';
             row.insertCell(4).textContent = transaction.growth_rate !== null ? transaction.growth_rate : '-';
             let editCell = row.insertCell(5);
-            if (transaction.id) {
-            // Hanya tampilkan tombol jika `transaction.id` ada
+            // console.log(JSON.stringify(transaction));
+            if (transaction.id !== 0) {
                 let editUrl = `${baseUrl}edit/${transaction.id}`;
                 editCell.innerHTML = `<a href="${editUrl}" class="btn btn-sm btn-primary">Edit</a>`;
             } else {

@@ -31,18 +31,19 @@ class Transaction extends Controller
     // Function to display form for adding or editing a transaction
     public function form($id = null)
     {
-        $data = [];
+        
+        // Initialize the transaction data
+        $data['transaksi'] = null;
 
+        // If an ID is provided, fetch the transaction details for editing
         if ($id) {
-            $data['transaction'] = $this->transactionModel->find($id);
-            if (!$data['transaction']) {
-                throw new \CodeIgniter\Exceptions\PageNotFoundException("Data transaksi dengan ID $id tidak ditemukan");
-            }
-        } else {
-            $data['transaction'] = []; // Initialize as an empty array if adding a new transaction
+            $data['transaksi'] = $this->transactionModel->find($id);
         }
-
+        // Fetch province and city data for the form dropdowns
         $data['provinsi'] = $this->provinceModel->findAll();
+        $data['kota'] = $this->cityModel->findAll();
+
+        // Load the form view
         return view('app/transaction_form', $data);
     }
 
@@ -95,17 +96,57 @@ class Transaction extends Controller
     // Function to edit a transaction by ID
     public function edit($id)
     {
-         $db = \Config\Database::connect();
-        // Mengambil data berdasarkan ID
-        $data['record_indicator'] = $db->table('indicator')->where('id', $id)->get()->getRow();
-        
-        // Jika transaksi tidak ditemukan, kembalikan ke halaman sebelumnya dengan pesan error
-        if (!$data['record_transaction']) {
-            return redirect()->back()->with('error', 'Data transaksi tidak ditemukan');
+        $db = \Config\Database::connect();
+        // Ambil data transaksi berdasarkan ID
+        $transaction = $this->transactionModel->find($id);
+        if (!$transaction) {
+            return redirect()->to('/app/transaction')->with('error', 'Transaction not found.');
         }
-        
-        // Kirim data transaksi ke view untuk ditampilkan dalam form edit
+
+        // Kirimkan data transaksi ke view
+        $data['transaction'] = $transaction;
+        $data['provinsi'] = $this->provinceModel->findAll();
+        $data['cities'] = $this->cityModel->findAll();
+
+        // Tampilkan form edit
         return view('app/transaction_form', $data);
+    }
+
+    public function update($id)
+    {
+        $validationRules = [
+            'provinsi' => 'required',
+            'kota' => 'required',
+            'tahun' => 'required',
+            'domain' => 'required',
+            'indikator_name' => 'required',
+            'no_indikator' => 'required',
+            'goal' => 'required',
+            'nilai' => 'required',
+            'growth_rate' => 'required'
+        ];
+
+        if (!$this->validate($validationRules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Get data from the form
+        $data = [
+            'provinsi' => $this->request->getPost('provinsi'),
+            'kota' => $this->request->getPost('kota'),
+            'year' => $this->request->getPost('tahun'),
+            'domain' => $this->request->getPost('domain'),
+            'indicator_name' => $this->request->getPost('indikator_name'),
+            'indicator_id' => $this->request->getPost('no_indikator'),
+            'goal' => $this->request->getPost('goal'),
+            'value_fix' => $this->request->getPost('nilai'),
+            'growth_rate' => $this->request->getPost('growth_rate')
+        ];
+
+        // Update the transaction
+        $this->transactionModel->update($id, $data);
+
+        return redirect()->to('/app/transaction')->with('success', 'Transaction updated successfully');
     }
 
     // Function to delete a transaction by ID
@@ -158,24 +199,73 @@ class Transaction extends Controller
     {
         $db = \Config\Database::connect();
         
-        $sql = "
-            SELECT t.year, t.province_id, t.city_id, t.city_name,i.indicator_name, t.indicator_id, t.goal, t.domain, t.value_fix, t.polaritas,
-            (SELECT MAX(value_fix) FROM sdg_ptsi.transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) AS value_sebelumnya,
-            CASE WHEN t.polaritas = 'Negatif' THEN (SELECT MAX(value_fix) FROM sdg_ptsi.transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) - t.value_fix
-            ELSE 
-            t.value_fix - (SELECT MAX(value_fix) FROM sdg_ptsi.transaction AS t1 WHERE t1.year = t.year - 1 AND t1.city_id = t.city_id AND t1.province_id = t.province_id AND t1.indicator_id = t.indicator_id) END AS growth_rate
+        // SQL untuk UPDATE growth_rate
+        $updateSql = "
+            UPDATE sdg_ptsi.transaction t
+            SET 
+                growth_rate = CASE 
+                    WHEN t.polaritas = 'Negatif' THEN 
+                        (SELECT MAX(value_fix) 
+                        FROM sdg_ptsi.transaction AS t1 
+                        WHERE t1.year = t.year - 1 
+                        AND t1.city_id = t.city_id 
+                        AND t1.province_id = t.province_id 
+                        AND t1.indicator_id = t.indicator_id) - t.value_fix
+                    ELSE 
+                        t.value_fix - (SELECT MAX(value_fix) 
+                                    FROM sdg_ptsi.transaction AS t1 
+                                    WHERE t1.year = t.year - 1 
+                                        AND t1.city_id = t.city_id 
+                                        AND t1.province_id = t.province_id 
+                                        AND t1.indicator_id = t.indicator_id)
+                END
+            WHERE 
+                t.province_id = ? 
+                AND t.city_id = ? 
+                AND t.year = ?    
+                AND t.domain = ?;
+        ";
+        
+        // Eksekusi query UPDATE
+        $db->query($updateSql, [$province_id, $city_id, $year, $domain_id]);
+
+        // SQL untuk SELECT data yang telah diperbarui
+        $selectSql = "
+            SELECT t.id, t.year, t.province_id, t.city_id, t.city_name, i.indicator_name, 
+                t.indicator_id, t.goal, t.domain, t.value_fix, t.polaritas,
+                (SELECT MAX(value_fix) FROM sdg_ptsi.transaction AS t1 
+                    WHERE t1.year = t.year - 1 
+                    AND t1.city_id = t.city_id 
+                    AND t1.province_id = t.province_id 
+                    AND t1.indicator_id = t.indicator_id) AS value_sebelumnya,
+                CASE 
+                    WHEN t.polaritas = 'Negatif' THEN 
+                        (SELECT MAX(value_fix) FROM sdg_ptsi.transaction AS t1 
+                            WHERE t1.year = t.year - 1 
+                            AND t1.city_id = t.city_id 
+                            AND t1.province_id = t.province_id 
+                            AND t1.indicator_id = t.indicator_id) - t.value_fix
+                    ELSE 
+                        t.value_fix - (SELECT MAX(value_fix) FROM sdg_ptsi.transaction AS t1 
+                                        WHERE t1.year = t.year - 1 
+                                            AND t1.city_id = t.city_id 
+                                            AND t1.province_id = t.province_id 
+                                            AND t1.indicator_id = t.indicator_id) 
+                END AS growth_rate
             FROM sdg_ptsi.transaction t 
             LEFT OUTER JOIN sdg_ptsi.`indicator` i ON t.indicator_id = i.no_indicator
-            WHERE t.province_id = ?
-            AND t.city_id = ?
-            AND t.year = ?
-            AND t.domain = ?"; 
-        // echo $sql;
-        // echo $year."".$city_id."".$province_id."".$domain_id."";
-        $query = $db->query($sql, [$province_id,  $city_id, $year, $domain_id]);
-        // $query = $db->query($sql);
-        // var_dump($query);
+            WHERE 
+                t.province_id = ? 
+                AND t.city_id = ? 
+                AND t.year = ?    
+                AND t.domain = ?;
+        ";
+
+        // Eksekusi query SELECT untuk mendapatkan data yang telah diperbarui
+        $query = $db->query($selectSql, [$province_id, $city_id, $year, $domain_id]);
         
+        // Mengembalikan hasil dalam format JSON
         return $this->response->setJSON($query->getResult());
     }
+
 }
