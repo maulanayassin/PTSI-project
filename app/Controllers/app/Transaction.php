@@ -29,108 +29,50 @@ class Transaction extends Controller
     }
 
     // Function to display form for adding or editing a transaction
-    public function form($id = null)
+   public function form($id = null)
     {
-        
-        // Initialize the transaction data
-        $data['transaksi'] = null;
+        $provinsi = $this->provinceModel->findAll();
 
-        // If an ID is provided, fetch the transaction details for editing
-        if ($id) {
-            $data['transaksi'] = $this->transactionModel->find($id);
+        $data = [
+            'provinsi' => $provinsi,
+            'transaction' => $id ? $this->transactionModel->find($id) : null,
+        ];
+
+        // If editing, load cities for the selected province
+        if ($id && $data['transaction']) {
+            $data['cities'] = $this->cityModel->where('kemendagri_code', $data['transaction']['provinsi'])->findAll();
         }
-        // Fetch province and city data for the form dropdowns
-        $data['provinsi'] = $this->provinceModel->findAll();
-        $data['kota'] = $this->cityModel->findAll();
 
-        // Load the form view
         return view('app/transaction_form', $data);
     }
 
-    // Function to submit transaction data (insert or update)
+    // Handle form submission (insert or update transaction data)
     public function submit()
     {
         $id = $this->request->getPost('id');
 
-        if ($this->validate([
+        // Validate the input
+        if (!$this->validate([
             'goal' => 'required',
-            'domain' => 'required|in_list[1,2,3]', // Validate 'domain' must be one of the listed values
+            'domain' => 'required|in_list[1,2,3]',
         ])) {
-            $db = \Config\Database::connect();
-
-            // Retrieve values for 2019 and 2020 from the transaction table
-            $value2019 = $db->table('transaction')->where('year', 2019)->get()->getRow();
-            $value2020 = $db->table('transaction')->where('year', 2020)->get()->getRow();
-
-            // Calculate growth rate
-            $growth_rate = null;
-            if ($value2019 && $value2020) {
-                $growth_rate = abs($value2019->value - $value2020->value);
-            }
-
-            // Data to save or update
-            $data = [
-                'goal' => $this->request->getPost('goal'),
-                'year_2019' => $value2019 ? $value2019->value : null,
-                'year_2020' => $value2020 ? $value2020->value : null,
-                'growth_rate' => $growth_rate,
-                'domain' => $this->request->getPost('domain'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
-
-            if ($id) {
-                // Update existing transaction
-                $this->transactionModel->update($id, $data);
-            } else {
-                // Insert new transaction
-                $data['created_at'] = date('Y-m-d H:i:s');
-                $this->transactionModel->save($data);
-            }
-
-            return redirect()->to('/app/transaction')->with('success', 'Data berhasil disimpan.');
-        }
-
-        return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-    }
-
-    // Function to edit a transaction by ID
-    public function edit($id)
-    {
-        $db = \Config\Database::connect();
-        // Ambil data transaksi berdasarkan ID
-        $transaction = $this->transactionModel->find($id);
-        if (!$transaction) {
-            return redirect()->to('/app/transaction')->with('error', 'Transaction not found.');
-        }
-
-        // Kirimkan data transaksi ke view
-        $data['transaction'] = $transaction;
-        $data['provinsi'] = $this->provinceModel->findAll();
-        $data['cities'] = $this->cityModel->findAll();
-
-        // Tampilkan form edit
-        return view('app/transaction_form', $data);
-    }
-
-    public function update($id)
-    {
-        $validationRules = [
-            'provinsi' => 'required',
-            'kota' => 'required',
-            'tahun' => 'required',
-            'domain' => 'required',
-            'indikator_name' => 'required',
-            'no_indikator' => 'required',
-            'goal' => 'required',
-            'nilai' => 'required',
-            'growth_rate' => 'required'
-        ];
-
-        if (!$this->validate($validationRules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        // Get data from the form
+        // Connect to the database
+        $db = \Config\Database::connect();
+
+        // Retrieve values for 2019 and 2020 to calculate growth rate
+        $value2019 = $db->table('transaction')->where('year', 2019)->get()->getRow();
+        $value2020 = $db->table('transaction')->where('year', 2020)->get()->getRow();
+
+        // Calculate growth rate
+        $growth_rate = null;
+        if ($value2019 && $value2020) {
+            $growth_rate = abs($value2020->value - $value2019->value);
+        }
+
+        // Data to save or update
         $data = [
             'provinsi' => $this->request->getPost('provinsi'),
             'kota' => $this->request->getPost('kota'),
@@ -140,13 +82,95 @@ class Transaction extends Controller
             'indicator_id' => $this->request->getPost('no_indikator'),
             'goal' => $this->request->getPost('goal'),
             'value_fix' => $this->request->getPost('nilai'),
-            'growth_rate' => $this->request->getPost('growth_rate')
+            'growth_rate' => $growth_rate,
+            'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-        // Update the transaction
+        if ($id) {
+            // Update existing transaction
+            $this->transactionModel->update($id, $data);
+        } else {
+            // Insert new transaction
+            $data['created_at'] = date('Y-m-d H:i:s');
+            $this->transactionModel->save($data);
+        }
+
+        return redirect()->to('/app/transaction')->with('success', 'Data berhasil disimpan.');
+    }
+
+    // Function to edit a transaction by ID
+    public function edit($id)
+    {
+        // Menghubungkan ke database
+        $db = \Config\Database::connect();
+
+        // Menarik data transaksi berdasarkan ID
+        $transaction = $this->transactionModel->find($id);
+        
+        if (!$transaction) {
+            return redirect()->to('/app/transaction')->with('error', 'Data transaksi tidak ditemukan.');
+        }
+
+        // Mengambil data provinsi
+        $provinsi = $this->provinceModel->findAll();
+
+        // Jika transaksi memiliki provinsi, ambil daftar kota berdasarkan provinsi tersebut
+        $cities = [];
+        if (isset($transaction['provinsi'])) {
+            // Mengambil data kota berdasarkan kemendagri_code provinsi
+            $cities = $this->cityModel->where('kemendagri_code', $transaction['provinsi'])->findAll();
+        }
+
+        // Menyiapkan data untuk tampilan
+        $data = [
+            'transaction' => $transaction,
+            'provinsi' => $provinsi,
+            'cities' => $cities,
+        ];
+
+        // Mengirim data ke tampilan (view)
+        return view('app/transaction_form', $data);
+    }
+
+
+    // Update the transaction after editing
+    public function update($id)
+    {
+        // Validation rules
+        $validationRules = [
+            'provinsi' => 'required',
+            'kota' => 'required',
+            'tahun' => 'required',
+            'domain' => 'required',
+            'indikator_name' => 'required',
+            'no_indikator' => 'required',
+            'goal' => 'required',
+            'nilai' => 'required',
+        ];
+
+        // Validate input data
+        if (!$this->validate($validationRules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Get data from form input
+        $data = [
+            'provinsi' => $this->request->getPost('provinsi'),
+            'kota' => $this->request->getPost('kota'),
+            'year' => $this->request->getPost('tahun'),
+            'domain' => $this->request->getPost('domain'),
+            'indicator_name' => $this->request->getPost('indikator_name'),
+            'indicator_id' => $this->request->getPost('no_indikator'),
+            'goal' => $this->request->getPost('goal'),
+            'value_fix' => $this->request->getPost('nilai'),
+            'growth_rate' => $this->request->getPost('growth_rate'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
+
+        // Update the transaction in the database
         $this->transactionModel->update($id, $data);
 
-        return redirect()->to('/app/transaction')->with('success', 'Transaction updated successfully');
+        return redirect()->to('/app/transaction')->with('success', 'Transaksi berhasil diperbarui');
     }
 
     // Function to delete a transaction by ID
@@ -194,6 +218,14 @@ class Transaction extends Controller
             return $this->response->setJSON($transactions);
         }
     }
+
+    public function getCitiesByProvince($provinceId)
+    {
+        $cities = $this->cityModel->where('province_id', $provinceId)->findAll();
+        return $this->response->setJSON($cities);
+    }
+
+
     // Function to fetch transaction data based on year and city name
     public function processGrowth($year, $city_id, $province_id, $domain_id)
     {
