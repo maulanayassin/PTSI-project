@@ -41,12 +41,8 @@ Form Transaksi
                 </div>
 
                 <div class="col-md-3 mb-3">
-                    <label for="tahun-dropdown" class="form-label">Pilih Tahun</label>
-                    <select class="form-select" name="tahun" id="tahun-dropdown">
-                        <option value="">Pilih Tahun</option>
-                        <option value="2019" <?= (isset($transaction) && $transaction['year'] == 2019) ? 'selected' : '' ?>>2019</option>
-                        <option value="2020" <?= (isset($transaction) && $transaction['year'] == 2020) ? 'selected' : '' ?>>2020</option>
-                    </select>
+                    <label for="nilai" class="form-label">Tahun</label>
+                    <input type="number" class="form-control" name="tahun" id="tahun" value="<?= isset($transaction) ? esc($transaction['year']) : '' ?>" required min="2019" max="2099" step="1">
                 </div>
 
                 <div class="col-md-3 mb-3">
@@ -62,17 +58,12 @@ Form Transaksi
 
             <div class="mb-3">
                 <label for="indikator_name" class="form-label">Nama Indikator</label>
-                <input type="text" class="form-control" name="indikator_name" id="indikator_name" value="<?= isset($transaction) ? esc($transaction['indicator_name']) : '' ?>" <?= isset($transaction) ? 'disabled' : 'required' ?>>
-            </div>
-
-            <div class="mb-3">
-                <label for="no_indikator" class="form-label">No. Indikator</label>
-                <input type="text" class="form-control" name="no_indikator" id="no_indikator" value="<?= isset($transaction) ? esc($transaction['indicator_id']) : '' ?>" <?= isset($transaction) ? 'disabled' : 'required' ?>>
+                <input type="text" class="form-control" name="indikator_name" id="indikator_name" value="<?= isset($transaction) ? esc($transaction['indicator_name']) : '' ?>" <?= isset($transaction)?>>
             </div>
 
             <div class="mb-3">
                 <label for="goal" class="form-label">Goal</label>
-                <input type="text" class="form-control" name="goal" id="goal" value="<?= isset($transaction) ? esc($transaction['goal']) : '' ?>" <?= isset($transaction) ? 'disabled' : 'required' ?>>
+                <input type="text" class="form-control" name="goal" id="goal" value="<?= isset($transaction) ? esc($transaction['goal']) : '' ?>" <?= isset($transaction)?>>
             </div>
 
             <div class="mb-3">
@@ -83,7 +74,7 @@ Form Transaksi
                 <button type="submit" class="btn btn-primary">
                     <?= isset($transaction) ? 'Update Transaksi' : 'Buat Transaksi' ?>
                 </button>
-                <a href="<?= site_url('/app/transaction') ?>" class="btn btn-secondary">Batal</a>
+                <a href="<?= site_url('/app/transaction/submit') ?>" class="btn btn-secondary">Batal</a>
             </div>
         </form>
     </div>
@@ -97,19 +88,19 @@ Form Transaksi
         const $yearDropdown = $('#tahun-dropdown');
         const $domainDropdown = $('#domain-dropdown');
 
-        // Enable or disable the dropdown based on whether the transaction has data
+        // Fungsi untuk mengatur status dropdown (enable/disable)
         function setDropdownsState() {
-            if ($('#provinsi-dropdown').val()) {
-                $provinceDropdown.prop('disabled', true);
-            } else {
-                $provinceDropdown.prop('required', true);
-            }
+            // if ($('#provinsi-dropdown').val()) {
+            //     $provinceDropdown.prop('disabled', true);
+            // } else {
+            //     $provinceDropdown.prop('required', true);
+            // }
 
-            if ($('#kota-dropdown').val()) {
-                $cityDropdown.prop('disabled', true);
-            } else {
-                $cityDropdown.prop('required', true);
-            }
+            // if ($('#kota-dropdown').val()) {
+            //     $cityDropdown.prop('disabled', true);
+            // } else {
+            //     $cityDropdown.prop('required', true);
+            // }
 
             if ($('#tahun-dropdown').val()) {
                 $yearDropdown.prop('disabled', true);
@@ -117,18 +108,18 @@ Form Transaksi
                 $yearDropdown.prop('required', true);
             }
 
-            if ($('#domain-dropdown').val()) {
-                $domainDropdown.prop('disabled', true);
-            } else {
-                $domainDropdown.prop('required', true);
-            }
+            // if ($('#domain-dropdown').val()) {
+            //     $domainDropdown.prop('disabled', true);
+            // } else {
+            //     $domainDropdown.prop('required', true);
+            // }
         }
 
-        setDropdownsState(); // Initial state setup
+        setDropdownsState(); // Set initial state for dropdowns
 
+        // Fungsi untuk menangani perubahan pada dropdown provinsi
         $provinceDropdown.on('change', function () {
             const provinceId = $(this).val();
-
             if (provinceId) {
                 fetchCitiesByProvince(provinceId);
             } else {
@@ -136,16 +127,27 @@ Form Transaksi
             }
         });
 
+        // Fungsi untuk mengambil data kota berdasarkan provinsi
         function fetchCitiesByProvince(provinceId) {
             $.ajax({
-                url: `<?= site_url('/app/getCitiesByProvince') ?>/${provinceId}`,
+                url: `<?= site_url('/app/transaction/getCitiesByProvince') ?>/${provinceId}`,
                 type: 'GET',
                 dataType: 'json',
-                success: populateCityDropdown,
-                error: handleError
+                success: function (data) {
+                    populateCityDropdown(data);
+                    // If there is a previous transaction, select the city
+                    if ('<?= isset($transaction) ? $transaction['city_name'] : '' ?>') {
+                        const selectedCity = '<?= isset($transaction) ? $transaction['city_name'] : '' ?>';
+                        $cityDropdown.val(selectedCity);
+                    }
+                },
+                error: function () {
+                    alert("Error loading cities. Please try again.");
+                }
             });
         }
 
+        // Fungsi untuk mengisi dropdown kota dengan data yang diterima
         function populateCityDropdown(data) {
             resetCityDropdown();
             $.each(data, function (key, value) {
@@ -153,13 +155,11 @@ Form Transaksi
             });
         }
 
+        // Fungsi untuk mereset dropdown kota
         function resetCityDropdown() {
             $cityDropdown.empty().append('<option value="">Pilih Kota</option>');
         }
-
-        function handleError() {
-            alert("Error loading cities. Please try again.");
-        }
     });
+
 </script>
 <?= $this->endSection() ?>

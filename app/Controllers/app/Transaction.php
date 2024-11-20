@@ -49,54 +49,65 @@ class Transaction extends Controller
     // Handle form submission (insert or update transaction data)
     public function submit()
     {
-        $id = $this->request->getPost('id');
+        // Koneksi ke database
+        $db = \Config\Database::connect();
 
-        // Validate the input
-        if (!$this->validate([
-            'goal' => 'required',
-            'domain' => 'required|in_list[1,2,3]',
-        ])) {
+        // Aturan validasi untuk input
+        $validationRules = [
+            'provinsi' => 'required',
+            'kota' => 'required',
+            'tahun' => 'required|numeric',
+            'nilai' => 'required|numeric', // Pastikan 'nilai' adalah angka
+        ];
+
+        // Jika validasi gagal, kembali ke form dengan pesan kesalahan
+        if (!$this->validate($validationRules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        // Connect to the database
-        $db = \Config\Database::connect();
-
-        // Retrieve values for 2019 and 2020 to calculate growth rate
-        $value2019 = $db->table('transaction')->where('year', 2019)->get()->getRow();
-        $value2020 = $db->table('transaction')->where('year', 2020)->get()->getRow();
-
-        // Calculate growth rate
-        $growth_rate = null;
-        if ($value2019 && $value2020) {
-            $growth_rate = abs($value2020->value - $value2019->value);
-        }
-
-        // Data to save or update
+        // Menyusun data dari input untuk disimpan ke database
         $data = [
-            'provinsi' => $this->request->getPost('provinsi'),
-            'kota' => $this->request->getPost('kota'),
+            'province_id' => $this->request->getPost('provinsi'),
+            'city_id' => $this->request->getPost('kota'),
             'year' => $this->request->getPost('tahun'),
             'domain' => $this->request->getPost('domain'),
             'indicator_name' => $this->request->getPost('indikator_name'),
-            'indicator_id' => $this->request->getPost('no_indikator'),
             'goal' => $this->request->getPost('goal'),
             'value_fix' => $this->request->getPost('nilai'),
-            'growth_rate' => $growth_rate,
             'updated_at' => date('Y-m-d H:i:s'),
         ];
 
-        if ($id) {
-            // Update existing transaction
-            $this->transactionModel->update($id, $data);
-        } else {
-            // Insert new transaction
-            $data['created_at'] = date('Y-m-d H:i:s');
-            $this->transactionModel->save($data);
+        // Cek apakah ini adalah operasi update atau insert berdasarkan ID
+        $id = $this->request->getPost('id');
+
+        try {
+            if ($id) {
+                // Jika ada ID, lakukan update data
+                $updateQuery = $db->table('transaction')->update($data, ['id' => $id]);
+                if ($updateQuery) {
+                    $message = 'Transaksi berhasil diperbarui';
+                } else {
+                    throw new \Exception('Gagal memperbarui transaksi');
+                }
+            } else {
+                // Jika tidak ada ID, lakukan insert data
+                $insertQuery = $db->table('transaction')->insert($data);
+                if ($insertQuery) {
+                    $message = 'Transaksi berhasil dibuat';
+                } else {
+                    throw new \Exception('Gagal membuat transaksi baru');
+                }
+            }
+        } catch (\Exception $e) {
+            // Jika terjadi kesalahan, kembalikan dengan pesan error
+            return redirect()->back()->withInput()->with('errors', $e->getMessage());
         }
 
-        return redirect()->to('/app/transaction')->with('success', 'Data berhasil disimpan.');
+        // Jika berhasil, redirect ke halaman transaksi dengan pesan sukses
+        return redirect()->to('/app/transaction')->with('success', $message);
     }
+
+
 
     // Function to edit a transaction by ID
     public function edit($id)

@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('title') ?>
-Provinsi
+Data Transaksi Provinsi
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
@@ -46,7 +46,7 @@ Provinsi
             </div>
         </div>
         <div class="text-end">
-            <button id="refresh-button" class="btn btn-secondary me-2">
+            <button id="refresh-button" class="btn btn-success me-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"></path>
@@ -62,7 +62,7 @@ Provinsi
                         <path d="M19 16v6"></path></svg>
                 <i class="bi bi-arrow-repeat"></i> Edit
             </button> -->
-             <a href="<?= site_url('/app/transaction/form/' . (isset($transaction['id']) ? $transaction['id'] : '')) ?>" class="btn btn-success">Create New</a>
+             <!-- <a href="<?= site_url('/app/transaction/form/' . (isset($transaction['id']) ? $transaction['id'] : '')) ?>" class="btn btn-success">Create New</a> -->
             <!-- <button id="process-button" class="btn btn-success">
                 <i class="bi bi-plus-circle"></i> Create New
             </button> -->
@@ -139,7 +139,6 @@ Provinsi
         });
     }
 
-
     document.getElementById('provinsi-dropdown').addEventListener('change', function() {
         const provinceCode = this.value;
         if (provinceCode) {
@@ -160,72 +159,7 @@ Provinsi
         }
     });
 
-    // document.getElementById('kota-dropdown').addEventListener('change', function() {
-    //     const cityCode = this.value;
-    //     const year = document.getElementById('tahun-dropdown').value;
-    //     const domain = document.getElementById('domain-dropdown').value;
-    //     const provinceCode = document.getElementById('provinsi-dropdown').value;
-
-    //     if (cityCode && year && domain) {
-    //         fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 'X-CSRF-TOKEN': csrfToken
-    //             }
-    //         })
-    //         .then(response => response.json())
-    //         .then(data => renderTable(data))
-    //         .catch(error => console.error('Error fetching transaction data:', error));
-    //     }
-    // });
-
-    // document.getElementById('tahun-dropdown').addEventListener('change', function() {
-    //     const year = this.value;
-    //     const cityCode = document.getElementById('kota-dropdown').value;
-    //     const domain = document.getElementById('domain-dropdown').value;
-    //     const provinceCode = document.getElementById('provinsi-dropdown').value;
-
-    //     if (cityCode && year && domain) {
-    //         fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 'X-CSRF-TOKEN': csrfToken
-    //             }
-    //         })
-    //         .then(response => response.json())
-    //         .then(data => renderTable(data))
-    //         .catch(error => console.error('Error fetching transaction data:', error));
-    //     }
-    // });
-
-    // document.getElementById('domain-dropdown').addEventListener('change', function() {
-    //     const domain = this.value;
-    //     const cityCode = document.getElementById('kota-dropdown').value;
-    //     const year = document.getElementById('tahun-dropdown').value;
-    //     const provinceCode = document.getElementById('provinsi-dropdown').value;
-
-    //     if (cityCode && year && domain) {
-    //         fetch(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 'X-CSRF-TOKEN': csrfToken
-    //             }
-    //         })
-    //         .then(response => response.json())
-    //         .then(data => renderTable(data))
-    //         .catch(error => console.error('Error fetching transaction data:', error));
-    //     }
-    // });
-
-
     document.getElementById('refresh-button').addEventListener('click', function() {
-        // document.getElementById('provinsi-dropdown').selectedIndex = 0;
-        // document.getElementById('kota-dropdown').innerHTML = '<option value="">Pilih Kota</option>';
-        // document.getElementById('domain-dropdown').innerHTML = '<option value="">Pilih Domain</option>';
-        // document.getElementById('domain-dropdown').disabled = true;
-        // const tableBody = document.getElementById('transaction-table').querySelector('tbody');
-        // tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Silahkan pilih provinsi, kota, dan tahun untuk melihat data.</td></tr>';
-        // localStorage.removeItem('allTransactions');
         const domain = document.getElementById('domain-dropdown').value;
         const cityCode = document.getElementById('kota-dropdown').value;
         const year = document.getElementById('tahun-dropdown').value;
