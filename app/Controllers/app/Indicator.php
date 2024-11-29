@@ -50,13 +50,24 @@ class Indicator extends Controller
         $row = $db->table('indicator')->where('id', $id)->get()->getRow();
         if ($row == null) {
             $db->table('indicator')->insert([
+                'no_indicator' => $this->request->getPost('no_indicator'),
                 'indicator_name' => $this->request->getPost('indicator_name'),
+                'goal' => $this->request->getPost('goal'),
+                
+                'polaritas' => $this->request->getPost('polaritas'),
+                'sumber' => $this->request->getPost('sumber'),
+                'created_at' => $this->request->getPost('created_at'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);
             
         } else {
             $db->table('indicator')->update([
+                'no_indicator' => $this->request->getPost('no_indicator'),
                 'indicator_name' => $this->request->getPost('indicator_name'),
+                'goal' => $this->request->getPost('goal'),
+                'polaritas' => $this->request->getPost('polaritas'),
+                'sumber' => $this->request->getPost('sumber'),
+                'created_at' => $this->request->getPost('created_at'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ],[
                 'id' => $id,

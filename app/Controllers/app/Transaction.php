@@ -240,42 +240,150 @@ class Transaction extends Controller
     // Function to fetch transaction data based on year and city name
     public function processGrowth($year, $city_id, $province_id, $domain_id)
     {
-        $db = \Config\Database::connect();
-        
-        // SQL untuk UPDATE growth_rate
-        $updateSql = "
-            UPDATE sdg_ptsi.transaction t
-            SET 
-                growth_rate = CASE 
-                    WHEN t.polaritas = 'Negatif' THEN 
-                        (SELECT MAX(value_fix) 
-                        FROM sdg_ptsi.transaction AS t1 
-                        WHERE t1.year = t.year - 1 
-                        AND t1.city_id = t.city_id 
-                        AND t1.province_id = t.province_id 
-                        AND t1.indicator_id = t.indicator_id) - t.value_fix
-                    ELSE 
-                        t.value_fix - (SELECT MAX(value_fix) 
-                                    FROM sdg_ptsi.transaction AS t1 
-                                    WHERE t1.year = t.year - 1 
-                                        AND t1.city_id = t.city_id 
-                                        AND t1.province_id = t.province_id 
-                                        AND t1.indicator_id = t.indicator_id)
-                END
-            WHERE 
-                t.province_id = ? 
-                AND t.city_id = ? 
-                AND t.year = ?    
-                AND t.domain = ?;
-        ";
-        
-        // Eksekusi query UPDATE
-        $db->query($updateSql, [$province_id, $city_id, $year, $domain_id]);
+       $db = \Config\Database::connect();
+        // Perhitungan growth_rate hanya untuk domain = 1
+        if ($domain_id == 1) {
+            $updateGrowthRateSql = "
+                UPDATE sdg_ptsi.transaction t
+                SET 
+                    growth_rate = CASE 
+                        WHEN t.polaritas = 'Negatif' THEN 
+                            (SELECT MAX(value_fix) 
+                            FROM sdg_ptsi.transaction AS t1 
+                            WHERE t1.year = t.year - 1 
+                            AND t1.city_id = t.city_id 
+                            AND t1.province_id = t.province_id 
+                            AND t1.indicator_id = t.indicator_id) - t.value_fix
+                        ELSE 
+                            t.value_fix - (SELECT MAX(value_fix) 
+                                        FROM sdg_ptsi.transaction AS t1 
+                                        WHERE t1.year = t.year - 1 
+                                            AND t1.city_id = t.city_id 
+                                            AND t1.province_id = t.province_id 
+                                            AND t1.indicator_id = t.indicator_id)
+                    END
+                WHERE 
+                    t.province_id = ? 
+                    AND t.city_id = ? 
+                    AND t.year = ?    
+                    AND t.domain = ?;
+            ";
+
+            // Eksekusi query UPDATE growth_rate
+            $db->query($updateGrowthRateSql, [$province_id, $city_id, $year, $domain_id]);
+        }
+        // SQL untuk UPDATE nilai_akhir berdasarkan domain
+        if ($domain_id == 1) {
+            $updateDomain1Sql = "
+                UPDATE sdg_ptsi.transaction t
+                SET t.nilai_akhir = (
+                    SELECT 
+                        CASE
+                            WHEN MAX(t_inner.growth_rate) BETWEEN sumber.min_growth_rate AND 
+                                sumber.min_growth_rate + ((sumber.max_growth_rate - sumber.min_growth_rate) / 3) THEN 0
+                            WHEN MAX(t_inner.growth_rate) BETWEEN sumber.min_growth_rate + ((sumber.max_growth_rate - sumber.min_growth_rate) / 3) AND 
+                                sumber.min_growth_rate + (2 * ((sumber.max_growth_rate - sumber.min_growth_rate) / 3)) THEN 1
+                            WHEN MAX(t_inner.growth_rate) BETWEEN sumber.min_growth_rate + (2 * ((sumber.max_growth_rate - sumber.min_growth_rate) / 3)) AND 
+                                sumber.max_growth_rate THEN 2
+                            ELSE NULL
+                        END AS nilai_akhir
+                    FROM sdg_ptsi.transaction t_inner
+                    LEFT JOIN (
+                        SELECT 
+                            indicator_id,
+                            domain, 
+                            MIN(growth_rate) AS min_growth_rate, 
+                            MAX(growth_rate) AS max_growth_rate 
+                        FROM 
+                            sdg_ptsi.transaction 
+                        WHERE domain = 1
+                        GROUP BY indicator_id, domain
+                    ) AS sumber 
+                    ON t_inner.indicator_id = sumber.indicator_id
+                    AND t_inner.domain = sumber.domain
+                    WHERE 
+                        t_inner.year = 2020
+                        AND t_inner.domain = 1
+                        AND t.indicator_id = t_inner.indicator_id
+                        AND t.city_name = t_inner.city_name
+                )
+                WHERE t.domain = 1 AND t.year = 2020;
+            ";
+            $db->query($updateDomain1Sql);
+        } elseif ($domain_id == 2) {
+            $updateDomain2Sql = "
+                UPDATE sdg_ptsi.transaction t
+                SET t.nilai_akhir = (
+                    SELECT 
+                        CASE
+                            WHEN t_inner.verification = 'TRUE' THEN t_inner.value_fix * 2
+                            ELSE t_inner.value_fix
+                        END AS nilai_akhir
+                    FROM sdg_ptsi.transaction t_inner
+                    WHERE 
+                        t_inner.year = 2020
+                        AND t_inner.domain = 2
+                        AND t_inner.value_fix <> 0
+                        AND t.indicator_id = t_inner.indicator_id
+                        AND t.city_name = t_inner.city_name
+                    GROUP BY 
+                        t_inner.indicator_id, 
+                        t_inner.city_name, 
+                        t_inner.domain, 
+                        t_inner.verification, 
+                        t_inner.value_fix
+                )
+                WHERE t.domain = 2 AND t.year = 2020;
+            ";
+            $db->query($updateDomain2Sql);
+        } elseif ($domain_id == 3) {
+            $updateDomain3Sql = "
+                UPDATE sdg_ptsi.transaction t
+                SET t.nilai_akhir = (
+                    SELECT 
+                        CASE
+                            WHEN MAX(t_inner.value_fix) BETWEEN sumber.min_value_fix AND 
+                                sumber.min_value_fix + ((sumber.max_value_fix - sumber.min_value_fix) / 3) THEN 0
+                            WHEN MAX(t_inner.value_fix) BETWEEN sumber.min_value_fix + ((sumber.max_value_fix - sumber.min_value_fix) / 3) AND 
+                                sumber.min_value_fix + (2 * ((sumber.max_value_fix - sumber.min_value_fix) / 3)) THEN 1
+                            WHEN MAX(t_inner.value_fix) BETWEEN sumber.min_value_fix + (2 * ((sumber.max_value_fix - sumber.min_value_fix) / 3)) AND 
+                                sumber.max_value_fix THEN 2
+                            ELSE NULL
+                        END AS nilai_akhir
+                    FROM 
+                        sdg_ptsi.transaction t_inner
+                    LEFT JOIN (
+                        SELECT 
+                            indicator_id, 
+                            domain, 
+                            MIN(value_fix) AS min_value_fix, 
+                            MAX(value_fix) AS max_value_fix
+                        FROM 
+                            sdg_ptsi.transaction
+                        WHERE 
+                            domain = 3 
+                        GROUP BY 
+                            indicator_id, 
+                            domain
+                    ) AS sumber
+                    ON t_inner.indicator_id = sumber.indicator_id  
+                    AND t_inner.domain = sumber.domain
+                    WHERE 
+                        t_inner.year = 2020 
+                        AND t_inner.domain = 3 
+                        AND t.indicator_id = t_inner.indicator_id
+                        AND t.city_name = t_inner.city_name
+                )
+                WHERE t.domain = 3 
+                AND t.year = 2020;
+            ";
+            $db->query($updateDomain3Sql);
+        }
 
         // SQL untuk SELECT data yang telah diperbarui
         $selectSql = "
             SELECT t.id, t.year, t.province_id, t.city_id, t.city_name, i.indicator_name, 
-                t.indicator_id, t.goal, t.domain, t.value_fix, t.polaritas,
+                t.indicator_id, t.goal, t.domain, t.value_fix, t.polaritas, t.nilai_akhir,
                 (SELECT MAX(value_fix) FROM sdg_ptsi.transaction AS t1 
                     WHERE t1.year = t.year - 1 
                     AND t1.city_id = t.city_id 

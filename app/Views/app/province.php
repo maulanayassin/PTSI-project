@@ -5,49 +5,64 @@ Provinsi
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<h2>Daftar Provinsi</h2>
-<div class="card">
-    <div class="card-header">
-        <div class="card-actions">
-            <a href="<?= site_url('/app/province/form') ?>" class="btn btn-pill">Tambah</a>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Daftar Provinsi</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Data Provinsi</h5>
+            <a href="<?= site_url('/app/province/form') ?>" class="btn btn-light btn-sm">
+                <i class="bi bi-plus-circle"></i> Tambah
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th>Nama Provinsi</th>
+                            <th>Kode BPS</th>
+                            <th>Kode Kemendagri</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($province)): ?>
+                            <tr>
+                                <td colspan="5" class="text-center">Tidak ada data</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($province as $prov): ?>
+                                <tr>
+                                    <td class="text-center"><?= esc($prov['id']) ?></td>
+                                    <td><?= esc($prov['province_name']) ?></td>
+                                    <td><?= esc($prov['bps_code']) ?></td>
+                                    <td><?= esc($prov['kemendagri_code']) ?></td>
+                                    <td class="text-center">
+                                        <a href="<?= site_url('/app/province/edit/' . $prov['id']) ?>" 
+                                           class="btn btn-sm btn-warning">
+                                           <i class="bi bi-pencil-square"></i> Edit
+                                        </a>
+                                        <form action="<?= site_url('/app/province/delete/' . $prov['id']) ?>" 
+                                              method="POST" 
+                                              onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');" 
+                                              class="d-inline-block">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="card-body">
-    <div class="table-responsive">
-        <table class="table table-vcenter card-table table-striped">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nama Provinsi</th>
-                <th>Kode BPS</th>
-                <th>Kode Kemendagri</th>
-                <th class="w-8">Aksi</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php if (empty($province)): ?>
-                <tr>
-                    <td colspan="3">Tidak ada data</td>
-                </tr>
-            <?php else: ?>
-                <?php foreach ($province as $prov): ?>
-                    <tr>
-                        <td><?= $prov['id'] ?></td>
-                        <td> <?= esc($prov['province_name']) ?></td>
-                        <td> <?= esc($prov['bps_code']) ?></td>
-                        <td> <?= esc($prov['kemendagri_code']) ?></td>
-                        <td>
-                            <a href="<?= site_url('/app/province/edit/' . $prov['id']) ?>"class="btn btn-sm">Edit</a>  
-                            <form action="<?= site_url('/app/province/delete/' . $prov['id']) ?>" method = "POST" onsubmit="return confirm('Are you sure you want to delete this user?');" class="d-inline-block"><button type="submit" class="btn btn-sm ">Hapus</form>                                     
-                        </td>
-                    </tr>                            
-                <?php endforeach; ?>
-            <?php endif; ?>
-            </tbody>
-        </table>  
-    </div>
-    </div>
 </div>
-
 
 <?= $this->endSection() ?>
