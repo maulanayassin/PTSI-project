@@ -49,6 +49,12 @@ $routes->group('app', ['filter' => 'auth'], function($routes) {
     $routes->get('transaction/processGrowth/(:num)/(:num)/(:num)/(:num)', 'App\Transaction::processGrowth/$1/$2/$3/$4');
     $routes->get('transaction/getCitiesByProvince/(:num)', 'App\Transaction::getCitiesByProvince/$1');
 
+    $routes->get('achievement', 'App\Achievement::index');
+    $routes->get('achievement/detail/(:num)', 'App\Achievement::achievementDetail/$1');
+
+    $routes->get('grading', 'App\Grading::index');
+    $routes->get('grading/detail/(:segment)', 'App\Grading::detail/$1');
+    
     // $routes->get('test', 'App\Transaction::processGrowth/2020/1101/11/1');
 
    

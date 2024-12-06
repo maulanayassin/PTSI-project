@@ -41,7 +41,8 @@ Data Transaksi Provinsi
                     <option value="">Pilih Domain</option>
                     <option value="1">Domain 1</option>
                     <option value="2">Domain 2</option>
-                    <option value="3">Domain 3</option>
+                    <option value="3">Domain 3A</option>
+                    <option value="4">Domain 3B</option>
                 </select>
             </div>
         </div>

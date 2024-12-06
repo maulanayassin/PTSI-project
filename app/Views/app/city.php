@@ -29,7 +29,7 @@ Kabupaten / Kota
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="table-body">
                         <?php if (empty($data_city)): ?>
                             <tr>
                                 <td colspan="6" class="text-center">Tidak ada data</td>
@@ -62,9 +62,72 @@ Kabupaten / Kota
                         <?php endif; ?>
                     </tbody>
                 </table>
+                <nav>
+                    <ul class="pagination justify-content-center" id="pagination"></ul>
+                </nav>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    const rowsPerPage = 10;
+    const tableBody = document.getElementById('table-body');
+    const pagination = document.getElementById('pagination');
+    let currentPage = 1;
+    const maxPagesToShow = 5;
+
+    function initPagination() {
+        const rows = document.querySelectorAll('#table-body tr');
+        const totalRows = rows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+        function renderPagination() {
+            pagination.innerHTML = `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo; Prev</a>
+                </li>
+            `;
+            const startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+            const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+            for (let i = startPage; i <= endPage; i++) {
+                pagination.innerHTML += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>
+                `;
+            }
+
+            pagination.innerHTML += `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${currentPage + 1}">Next &raquo;</a>
+                </li>
+            `;
+        }
+
+        function showPage(page) {
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            rows.forEach((row, index) => {
+                row.style.display = index >= start && index < end ? '' : 'none';
+            });
+
+            currentPage = page;
+            renderPagination();
+        }
+
+        pagination.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = parseInt(e.target.getAttribute('data-page'));
+            if (page) showPage(page);
+        });
+
+        showPage(1);
+    }
+
+    initPagination();
+</script>
 
 <?= $this->endSection() ?>
