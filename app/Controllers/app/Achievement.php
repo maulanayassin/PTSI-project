@@ -16,6 +16,9 @@ class Achievement extends Controller{
             'year' => $this->request->getGet('year-dropdown'),
         ];
 
+        // Debugging: Periksa nilai filter yang diterima
+        log_message('debug', 'Filters: ' . print_r($filters, true));
+
         // Ambil data berdasarkan filter
         $data['achievement'] = $achievementModel->getAchievements($filters);
         $data['filters'] = $filters; // Kirim filter kembali ke view untuk mempertahankan nilai input

@@ -22,19 +22,19 @@ Peringkat
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="region-dropdown" class="form-label">Wilayah Administratif</label>
-                    <select class="form-select" id="region-dropdown">
+                    <select class="form-select" id="region-dropdown" name="region-dropdown">
                         <option value="" selected>Wilayah Administratif</option>
-                        <option value="1">Kabupaten</option>
-                        <option value="2">Kota</option>
+                        <option value="Kabupaten">Kabupaten</option>
+                        <option value="Kota">Kota</option>
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="year-dropdown" class="form-label">Tahun</label>
-                    <select class="form-select" id="year-dropdown">
+                    <select class="form-select" id="year-dropdown" name="year-dropdown">
                         <option value="" selected>Tahun</option>
+                        <option value="2019">2019</option>
                         <option value="2020">2020</option>
                         <option value="2021">2021</option>
-                        <option value="2022">2022</option>
                     </select>
                 </div>
             </div>
@@ -62,17 +62,31 @@ Peringkat
                         <?php foreach ($achievement as $achievements): ?>
                         <tr data-region="<?= $achievements['region'] ?>" data-year="<?= $achievements['year'] ?>">
                             <td class="text-center"><?= $rank++ ?></td>
-                            <td class="text-center"><?= $achievements['city_name'] ?></td>
-                            <td class="text-center"><?= $achievements['region'] == 1 ? 'Kabupaten' : 'Kota' ?></td>
+                            <td class="text-center"><?= htmlspecialchars($achievements['city_name'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td class="text-center"><?= $achievements['region'] ?></td>
                             <td class="text-center"><?= $achievements['year'] ?></td>
-                            <td class="text-center <?= $achievements['champion_grade'] >= 80 ? 'text-success fw-bold' : ($achievements['champion_grade'] >= 50 ? 'text-warning' : 'text-danger') ?>">
+                            <td class="text-center"><?= $achievements['rating'] ?></td>
+                            <td class="text-center 
+                                <?php 
+                                $rating = $achievements['rating']; 
+                                if ($rating >= 80) {
+                                    echo 'text-success fw-bold'; 
+                                } elseif ($rating >= 70) {
+                                    echo 'text-primary'; 
+                                } elseif ($rating >= 60) {
+                                    echo 'text-info'; 
+                                } elseif ($rating >= 50) {
+                                    echo 'text-warning'; 
+                                } else {
+                                    echo 'text-danger'; 
+                                }
+                                ?>">
                                 <?= $achievements['champion_grade'] ?>
                             </td>
-                            <td class="text-center"><?= $achievements['rating'] ?></td>
                             <td class="text-center">
-                                <a href="<?= site_url('/app/grading/detail/' . urlencode($achievements['city_name'])) ?>" 
-                                class="btn btn-sm btn-info text-white">
-                                <i class="bi bi-eye"></i> Detail
+                                <a href="<?= site_url('/app/grading/detail/' . urlencode($achievements['city_name']).'?rank='.$rank-1) ?>" 
+                                    class="btn btn-sm btn-info text-white">
+                                    <i class="bi bi-eye"></i> Detail
                                 </a>
                             </td>
                         </tr>
@@ -127,8 +141,12 @@ Peringkat
         const totalRows = rows.length;
         const totalPages = Math.ceil(totalRows / rowsPerPage);
 
+        pagination.innerHTML = ''; // Clear previous pagination
+
         function renderPagination() {
-            pagination.innerHTML = `
+            if (totalPages <= 1) return; // Hide pagination if only one page
+
+            pagination.innerHTML += `
                 <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
                     <a class="page-link" href="#" data-page="${currentPage - 1}">&laquo; Prev</a>
                 </li>
@@ -171,15 +189,28 @@ Peringkat
 
         if (totalRows > 0) {
             showPage(1);
-        } else {
-            pagination.innerHTML = '';
         }
+    }
+
+    function applyFilters() {
+        const searchInputValue = searchInput.value;
+        const region = regionDropdown.value;
+        const year = yearDropdown.value;
+
+        // Redirect ke URL baru dengan query string
+        const queryParams = new URLSearchParams({
+            'search-kabupaten': searchInputValue,
+            'region-dropdown': region,
+            'year-dropdown': year,
+        });
+
+        window.location.href = `/app/achievement?${queryParams.toString()}`;
     }
 
     // Event Listeners
     searchInput.addEventListener('input', filterRows);
-    regionDropdown.addEventListener('change', filterRows);
-    yearDropdown.addEventListener('change', filterRows);
+    regionDropdown.addEventListener('change', applyFilters);
+    yearDropdown.addEventListener('change', applyFilters);
 
     // Initialize Pagination and Filter
     initPagination();

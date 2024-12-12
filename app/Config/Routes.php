@@ -43,6 +43,7 @@ $routes->group('app', ['filter' => 'auth'], function($routes) {
     $routes->get('transaction/edit/(:num)', 'App\Transaction::edit/$1');
     $routes->post('transaction/delete/(:num)', 'App\Transaction::delete/$1');
     $routes->post('transaction/submit', 'App\Transaction::submit');
+    $routes->get('transaction/batal', 'App\Transaction::batal');
     $routes->post('transaction/getCities', 'App\Transaction::getCities');
     $routes->post('transaction/getTransactionsByCity', 'App\Transaction::getTransactionsByCity');
     $routes->post('transaction/getTransactionsByCityAndDomain', 'App\Transaction::getTransactionsByCityAndDomain');
@@ -54,7 +55,12 @@ $routes->group('app', ['filter' => 'auth'], function($routes) {
 
     $routes->get('grading', 'App\Grading::index');
     $routes->get('grading/detail/(:segment)', 'App\Grading::detail/$1');
-    
+    $routes->get('grading/detail/(:any)/(:any)', 'App\Grading::detail/$1/$2');
+
+    $routes->get('dataprocessing', 'App\DataProcessing::index');
+    $routes->post('dataprocessing/processData', 'App\DataProcessing::processData');
+    $routes->get('dataprocessing/processData', 'App\DataProcessing::processData');
+
     // $routes->get('test', 'App\Transaction::processGrowth/2020/1101/11/1');
 
    

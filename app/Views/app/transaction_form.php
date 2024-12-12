@@ -4,7 +4,6 @@
 Form Transaksi
 <?= $this->endSection() ?>
 
-
 <?= $this->section('content') ?>
 <h2 class="text-center mt-4"><?= isset($transaction) ? 'Edit Transaksi' : 'Buat Transaksi Baru' ?></h2>
 <div class="card shadow-sm mb-4">
@@ -51,30 +50,27 @@ Form Transaksi
                         <option value="">Pilih Domain</option>
                         <option value="1" <?= (isset($transaction) && $transaction['domain'] == 1) ? 'selected' : '' ?>>Domain 1</option>
                         <option value="2" <?= (isset($transaction) && $transaction['domain'] == 2) ? 'selected' : '' ?>>Domain 2</option>
-                        <option value="3" <?= (isset($transaction) && $transaction['domain'] == 3) ? 'selected' : '' ?>>Domain 3</option>
+                        <option value="3.1" <?= (isset($transaction) && $transaction['domain'] == 3.1) ? 'selected' : '' ?>>Domain 3A</option>
+                        <option value="3" <?= (isset($transaction) && $transaction['domain'] == 3) ? 'selected' : '' ?>>Domain 3B</option>
                     </select>
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label for="indikator_name" class="form-label">Nama Indikator</label>
-                <input type="text" class="form-control" name="indikator_name" id="indikator_name" value="<?= isset($transaction) ? esc($transaction['indicator_name']) : '' ?>" <?= isset($transaction)?>>
+            <!-- Dynamic Form Section -->
+            <div id="dynamic-form">
+                <!-- This section will be dynamically updated by JavaScript -->
             </div>
 
-            <div class="mb-3">
-                <label for="goal" class="form-label">Goal</label>
-                <input type="text" class="form-control" name="goal" id="goal" value="<?= isset($transaction) ? esc($transaction['goal']) : '' ?>" <?= isset($transaction)?>>
-            </div>
-
-            <div class="mb-3">
-                <label for="nilai" class="form-label">Nilai</label>
-                <input type="number" class="form-control" name="nilai" id="nilai" value="<?= isset($transaction) ? esc($transaction['value_fix']) : '' ?>" required>
-            </div>
             <div class="text-end">
                 <button type="submit" class="btn btn-primary">
                     <?= isset($transaction) ? 'Update Transaksi' : 'Buat Transaksi' ?>
                 </button>
-                <a href="<?= site_url('/app/transaction/submit') ?>" class="btn btn-secondary">Batal</a>
+                <a href="<?= site_url('/app/transaction/batal?' . http_build_query([
+                    'provinsi' => isset($transaction) ? rawurlencode($transaction['province_id']) : '',
+                    'kota' => isset($transaction) ? rawurlencode($transaction['city_name']) : '',
+                    'tahun' => isset($transaction) ? rawurlencode($transaction['year']) : '',
+                    'domain' => isset($transaction) ? rawurlencode(str_replace('.', '', $transaction['domain'])) : '' // Menghapus titik
+                ])) ?>" class="btn btn-secondary">Batal</a>
             </div>
         </form>
     </div>
@@ -82,84 +78,125 @@ Form Transaksi
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function () {
-        const $provinceDropdown = $('#provinsi-dropdown');
-        const $cityDropdown = $('#kota-dropdown');
-        const $yearDropdown = $('#tahun-dropdown');
-        const $domainDropdown = $('#domain-dropdown');
+    const $provinceDropdown = $('#provinsi-dropdown');
+    const $cityDropdown = $('#kota-dropdown');
 
-        // Fungsi untuk mengatur status dropdown (enable/disable)
-        function setDropdownsState() {
-            // if ($('#provinsi-dropdown').val()) {
-            //     $provinceDropdown.prop('disabled', true);
-            // } else {
-            //     $provinceDropdown.prop('required', true);
-            // }
-
-            // if ($('#kota-dropdown').val()) {
-            //     $cityDropdown.prop('disabled', true);
-            // } else {
-            //     $cityDropdown.prop('required', true);
-            // }
-
-            if ($('#tahun-dropdown').val()) {
-                $yearDropdown.prop('disabled', true);
-            } else {
-                $yearDropdown.prop('required', true);
-            }
-
-            // if ($('#domain-dropdown').val()) {
-            //     $domainDropdown.prop('disabled', true);
-            // } else {
-            //     $domainDropdown.prop('required', true);
-            // }
+    function fetchCities(provinceId) {
+        if (!provinceId) {
+            $cityDropdown.empty().append('<option value="">Pilih Kota</option>');
+            return;
         }
 
-        setDropdownsState(); // Set initial state for dropdowns
-
-        // Fungsi untuk menangani perubahan pada dropdown provinsi
-        $provinceDropdown.on('change', function () {
-            const provinceId = $(this).val();
-            if (provinceId) {
-                fetchCitiesByProvince(provinceId);
-            } else {
-                resetCityDropdown();
+        $.ajax({
+            url: `<?= site_url('/app/transaction/getCitiesByProvince') ?>/${provinceId}`,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $cityDropdown.empty().append('<option value="">Pilih Kota</option>');
+                data.forEach(city => {
+                    $cityDropdown.append(`<option value="${city.bps_code}">${city.city_name}</option>`);
+                });
+            },
+            error: function() {
+                alert('Gagal memuat data kota!');
             }
         });
+    }
 
-        // Fungsi untuk mengambil data kota berdasarkan provinsi
-        function fetchCitiesByProvince(provinceId) {
-            $.ajax({
-                url: `<?= site_url('/app/transaction/getCitiesByProvince') ?>/${provinceId}`,
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    populateCityDropdown(data);
-                    // If there is a previous transaction, select the city
-                    if ('<?= isset($transaction) ? $transaction['city_name'] : '' ?>') {
-                        const selectedCity = '<?= isset($transaction) ? $transaction['city_name'] : '' ?>';
-                        $cityDropdown.val(selectedCity);
-                    }
-                },
-                error: function () {
-                    alert("Error loading cities. Please try again.");
-                }
-            });
-        }
-
-        // Fungsi untuk mengisi dropdown kota dengan data yang diterima
-        function populateCityDropdown(data) {
-            resetCityDropdown();
-            $.each(data, function (key, value) {
-                $cityDropdown.append(`<option value="${value.bps_code}">${value.city_name}</option>`);
-            });
-        }
-
-        // Fungsi untuk mereset dropdown kota
-        function resetCityDropdown() {
-            $cityDropdown.empty().append('<option value="">Pilih Kota</option>');
-        }
+    $provinceDropdown.on('change', function() {
+        const provinceId = $(this).val();
+        fetchCities(provinceId);
     });
 
+    $(document).ready(function () {
+        const $domainDropdown = $('#domain-dropdown');
+        const $dynamicForm = $('#dynamic-form');
+
+        function updateForm(domain) {
+            let formContent = '';
+
+            switch (domain) {
+                case '1':
+                    formContent = `
+                        <div class="mb-3">
+                            <label for="indikator_name" class="form-label">Nama Indikator</label>
+                            <input type="text" class="form-control" name="indikator_name" id="indikator_name" 
+                                value="<?= isset($transaction) ? esc($transaction['indicator_name']) : '' ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="goal" class="form-label">Goal</label>
+                            <input type="text" class="form-control" name="goal" id="goal" 
+                                value="<?= isset($transaction) ? esc($transaction['goal']) : '' ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="keterangan" class="form-label">Keterangan Nilai</label>
+                            <textarea class="form-control" name="ket_nilai" id="ket_nilai" required><?= isset($transaction) ? esc($transaction['value']) : '' ?></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nilai" class="form-label">Nilai</label>
+                            <input type="number" class="form-control" name="nilai" id="nilai" 
+                                value="<?= isset($transaction) ? esc($transaction['value_fix']) : '' ?>" required>
+                        </div>`;
+                    break;
+                case '2':
+                case '3.1':
+                    formContent = `
+                        <div class="mb-3">
+                            <label for="indikator_name" class="form-label">Nama Indikator</label>
+                            <input type="text" class="form-control" name="indikator_name" id="indikator_name" 
+                                value="<?= isset($transaction) ? esc($transaction['indicator_name']) : '' ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="goal" class="form-label">Goal</label>
+                            <input type="text" class="form-control" name="goal" id="goal" 
+                                value="<?= isset($transaction) ? esc($transaction['goal']) : '' ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="keterangan" class="form-label">Keterangan Nilai</label>
+                            <textarea class="form-control" name="keterangan" id="ket_nilai" required><?= isset($transaction) ? esc($transaction['value']) : '' ?></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="verification" class="form-label">Verification</label>
+                            <input type="text" class="form-control" name="verification" id="verification" 
+                                value="<?= isset($transaction) ? esc($transaction['verification']) : '' ?>" required>
+                        </div>`;
+                    break;
+                case '3':
+                    formContent = `
+                        <div class="mb-3">
+                            <label for="indikator_name" class="form-label">Nama Indikator</label>
+                            <input type="text" class="form-control" name="indikator_name" id="indikator_name" 
+                                value="<?= isset($transaction) ? esc($transaction['indicator_name']) : '' ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="goal" class="form-label">Goal</label>
+                            <input type="text" class="form-control" name="goal" id="goal" 
+                                value="<?= isset($transaction) ? esc($transaction['goal']) : '' ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="keterangan" class="form-label">Keterangan Nilai</label>
+                            <textarea class="form-control" name="ket_nilai" id="ket_nilai" required><?= isset($transaction) ? esc($transaction['value']) : '' ?></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nilai" class="form-label">Nilai</label>
+                            <input type="number" class="form-control" name="nilai" id="nilai" 
+                                value="<?= isset($transaction) ? esc($transaction['value_fix']) : '' ?>" required>
+                        </div>`;
+                    break;
+                default:
+                    formContent = '<p class="text-muted">Pilih domain untuk menampilkan form.</p>';
+            }
+
+            $dynamicForm.html(formContent);
+        }
+
+        // Initialize form based on selected domain (if editing)
+        updateForm($domainDropdown.val());
+
+        // Update form when domain changes
+        $domainDropdown.on('change', function () {
+            updateForm($(this).val());
+        });
+    });
 </script>
 <?= $this->endSection() ?>

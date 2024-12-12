@@ -41,8 +41,8 @@ Data Transaksi Provinsi
                     <option value="">Pilih Domain</option>
                     <option value="1">Domain 1</option>
                     <option value="2">Domain 2</option>
-                    <option value="3">Domain 3A</option>
-                    <option value="4">Domain 3B</option>
+                    <option value="3.1">Domain 3A</option>
+                    <option value="3">Domain 3B</option>
                 </select>
             </div>
         </div>
@@ -75,13 +75,13 @@ Data Transaksi Provinsi
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover" id="transaction-table">
-                <thead class="table-dark">
+                <thead class="table-dark text-center">
                     <tr>
                         <th>Nama Indikator</th>
                         <th>No. Indikator</th>
                         <th>Goal</th>
                         <th>Nilai</th>
-                        <th>Growth Rate</th>
+                        <th>Growth Rate / Validation</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -124,11 +124,16 @@ Data Transaksi Provinsi
 
         data.forEach(function(transaction) {
             let row = tableBody.insertRow();
+            // Menambahkan sel dengan properti text-center
             row.insertCell(0).textContent = transaction.indicator_name;
             row.insertCell(1).textContent = transaction.indicator_id;
+            row.cells[1].classList.add('text-center');
             row.insertCell(2).textContent = transaction.goal;
+            row.cells[2].classList.add('text-center');
             row.insertCell(3).textContent = transaction.value_fix !== null ? transaction.value_fix : '-';
+            row.cells[3].classList.add('text-center');
             row.insertCell(4).textContent = transaction.growth_rate !== null ? transaction.growth_rate : '-';
+            row.cells[4].classList.add('text-center');
             let editCell = row.insertCell(5);
             // console.log(JSON.stringify(transaction));
             if (transaction.id !== 0) {
@@ -165,6 +170,8 @@ Data Transaksi Provinsi
         const cityCode = document.getElementById('kota-dropdown').value;
         const year = document.getElementById('tahun-dropdown').value;
         const provinceCode = document.getElementById('provinsi-dropdown').value;
+
+        console.log(domain); 
 
         console.log(domain + '-' + cityCode + '-' + provinceCode + '-' + year);
         console.log(`${baseUrl}processGrowth/${year}/${cityCode}/${provinceCode}/${domain}`);

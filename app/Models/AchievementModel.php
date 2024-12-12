@@ -10,21 +10,24 @@ class AchievementModel extends Model
     protected $primaryKey = 'id'; // Primary key tabel (sesuaikan jika berbeda)
     protected $allowedFields = ['city_name', 'rating', 'champion_grade']; // Kolom yang dapat diambil
 
-    public function getAchievements($filters = [])
+    public function getAchievements($filters)
     {
         // Filter berdasarkan parameter yang diterima
-        $builder = $this->builder();
+        $builder = $this->db->table($this->table);
 
-        if (!empty($filters['region'])) {
-            $builder->where('region', $filters['region']); // filter berdasarkan wilayah
-        }
-
-        if (!empty($filters['year'])) {
-            $builder->where('year', $filters['year']); // filter berdasarkan tahun
-        }
-
+        // Filter berdasarkan nama kota
         if (!empty($filters['city_name'])) {
-            $builder->like('city_name', $filters['city_name']); // filter pencarian berdasarkan nama kota
+            $builder->like('city_name', $filters['city_name']);
+        }
+
+        // Filter berdasarkan wilayah (region)
+        if (!empty($filters['region'])) {
+            $builder->where('region', $filters['region']);
+        }
+
+        // Filter berdasarkan tahun
+        if (!empty($filters['year'])) {
+            $builder->where('year', $filters['year']);
         }
 
         // Mengurutkan berdasarkan rating secara menurun
