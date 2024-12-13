@@ -6,20 +6,20 @@ Indikator
 <?= $this->section('content') ?>
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-center">Tambah / Edit Indikator</h2>
+    <h2 class="mb-4 text-center">Create / Edit Indikator</h2>
     <form action="<?= site_url('/app/indicator/submit') ?>" method="post">
         <?= csrf_field() ?> 
         <input type="hidden" name="id" id="id" value="<?= ($record_indicator !== null ? $record_indicator->id : "") ?>">
         
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Form Indikator</h5>
+                <h5 class="mb-0">Indicator Form</h5>
             </div>
             <div class="card-body">
                 <div class="row">
                     <!-- No. Indikator -->
                     <div class="col-md-6 mb-3">
-                        <label for="no_indicator" class="form-label">No. Indikator</label>
+                        <label for="no_indicator" class="form-label">No. Indicator</label>
                         <input 
                             type="text" 
                             name="no_indicator" 
@@ -32,7 +32,7 @@ Indikator
                     
                     <!-- Nama Indikator -->
                     <div class="col-md-6 mb-3">
-                        <label for="indicator_name" class="form-label">Nama Indikator</label>
+                        <label for="indicator_name" class="form-label">Indicator Name</label>
                         <input 
                             type="text" 
                             name="indicator_name" 
@@ -71,7 +71,7 @@ Indikator
                     
                     <!-- Polaritas -->
                     <div class="col-md-6 mb-3">
-                        <label for="polaritas" class="form-label">Polaritas</label>
+                        <label for="polaritas" class="form-label">Polarity</label>
                         <input 
                             type="text" 
                             name="polaritas" 
@@ -84,7 +84,7 @@ Indikator
                     
                     <!-- Tahun -->
                     <div class="col-md-6 mb-3">
-                        <label for="tahun" class="form-label">Tahun</label>
+                        <label for="tahun" class="form-label">Year</label>
                         <input 
                             type="text" 
                             name="tahun" 
@@ -97,7 +97,7 @@ Indikator
                     
                     <!-- Sumber -->
                     <div class="col-md-6 mb-3">
-                        <label for="sumber" class="form-label">Sumber</label>
+                        <label for="sumber" class="form-label">Source</label>
                         <input 
                             type="text" 
                             name="sumber" 
@@ -112,7 +112,7 @@ Indikator
             
             <!-- Tombol Simpan -->
             <div class="card-footer d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary btn-pill px-4">Simpan</button>
+                <button type="submit" class="btn btn-primary btn-pill px-4">SAve</button>
             </div>
         </div>
     </form>

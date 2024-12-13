@@ -7,14 +7,14 @@ Indikator
 <?= $this->section('content') ?>
 
 <div class="container mt-4">
-    <h2 class="text-center mb-4">Daftar Indikator</h2>
+    <h2 class="text-center mb-4">List of Indicators</h2>
 
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Data Indikator</h5>
+            <h5 class="mb-0">Data IndicatorS</h5>
             <?php if (session()->get('role') === 'admin'): ?>
                 <a href="<?= site_url('/app/indicator/form') ?>" class="btn btn-light btn-sm">
-                    <i class="bi bi-plus-circle"></i> Tambah
+                    <i class="bi bi-plus-circle"></i> Add
                 </a>
             <?php endif; ?>
         </div>
@@ -23,13 +23,13 @@ Indikator
                 <table class="table table-bordered table-striped table-hover">
                     <thead class="table-dark text-center">
                         <tr>
-                            <th>No. Indikator</th>
-                            <th>Nama Indikator</th>
+                            <th>No. Indicator</th>
+                            <th>Indikator Name</th>
                             <th>Goal</th>
-                            <th>Polaritas</th>
-                            <th>Sumber</th>
+                            <th>polarity</th>
+                            <th>source</th>
                             <?php if (session()->get('role') === 'admin'): ?>
-                                <th class="text-center">Aksi</th>
+                                <th class="text-center">Action</th>
                             <?php endif; ?>
                         </tr>
                     </thead>
@@ -58,7 +58,7 @@ Indikator
                                                   class="d-inline-block">
                                                 <?= csrf_field() ?>
                                                 <button type="submit" class="btn btn-danger btn-sm">
-                                                    <i class="bi bi-trash"></i> Hapus
+                                                    <i class="bi bi-trash"></i> Delete
                                                 </button>
                                             </form>
                                         </td>

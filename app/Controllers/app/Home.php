@@ -92,7 +92,7 @@ class Home extends Controller
         return view('app/home', $data);
     }
 
-
+    
 
     /**
      * Mengambil nilai rata-rata skor dari database untuk masing-masing SDG goal

@@ -5,7 +5,7 @@ Form Transaksi
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<h2 class="text-center mt-4"><?= isset($transaction) ? 'Edit Transaksi' : 'Buat Transaksi Baru' ?></h2>
+<h2 class="text-center mt-4"><?= isset($transaction) ? 'Edit Transaction' : 'Create New Transaction' ?></h2>
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form action="<?= site_url('/app/transaction/submit') ?>" method="post">
@@ -14,9 +14,9 @@ Form Transaksi
 
             <div class="row">
                 <div class="col-md-3 mb-3">
-                    <label for="provinsi-dropdown" class="form-label">Pilih Provinsi</label>
+                    <label for="provinsi-dropdown" class="form-label">Select Province</label>
                     <select class="form-select" name="provinsi" id="provinsi-dropdown">
-                        <option value="">Pilih Provinsi</option>
+                        <option value="">Select Province</option>
                         <?php foreach ($provinsi as $prov): ?>
                             <option value="<?= esc($prov['kemendagri_code']) ?>" <?= (isset($transaction) && $transaction['province_id'] == $prov['kemendagri_code']) ? 'selected' : '' ?>>
                                 <?= esc($prov['province_name']) ?>
@@ -26,9 +26,9 @@ Form Transaksi
                 </div>
 
                 <div class="col-md-3 mb-3">
-                    <label for="kota-dropdown" class="form-label">Pilih Kota</label>
+                    <label for="kota-dropdown" class="form-label">Select Regencies / Cities</label>
                     <select class="form-select" name="kota" id="kota-dropdown">
-                        <option value="">Pilih Kota</option>
+                        <option value="">Select Regencies / Cities</option>
                         <?php if (isset($cities) && !empty($cities)): ?>
                             <?php foreach ($cities as $city): ?>
                                 <option value="<?= esc($city['id']) ?>" <?= (isset($transaction) && $transaction['kota'] == $city['bps_code']) ? 'selected' : '' ?>>
@@ -40,12 +40,12 @@ Form Transaksi
                 </div>
 
                 <div class="col-md-3 mb-3">
-                    <label for="nilai" class="form-label">Tahun</label>
+                    <label for="nilai" class="form-label">Year</label>
                     <input type="number" class="form-control" name="tahun" id="tahun" value="<?= isset($transaction) ? esc($transaction['year']) : '' ?>" required min="2019" max="2099" step="1">
                 </div>
 
                 <div class="col-md-3 mb-3">
-                    <label for="domain-dropdown" class="form-label">Pilih Domain</label>
+                    <label for="domain-dropdown" class="form-label">Select Domain</label>
                     <select class="form-select" name="domain" id="domain-dropdown">
                         <option value="">Pilih Domain</option>
                         <option value="1" <?= (isset($transaction) && $transaction['domain'] == 1) ? 'selected' : '' ?>>Domain 1</option>
@@ -63,14 +63,14 @@ Form Transaksi
 
             <div class="text-end">
                 <button type="submit" class="btn btn-primary">
-                    <?= isset($transaction) ? 'Update Transaksi' : 'Buat Transaksi' ?>
+                    <?= isset($transaction) ? 'Save Transaction' : 'Save New Transaction' ?>
                 </button>
                 <a href="<?= site_url('/app/transaction/batal?' . http_build_query([
                     'provinsi' => isset($transaction) ? rawurlencode($transaction['province_id']) : '',
                     'kota' => isset($transaction) ? rawurlencode($transaction['city_name']) : '',
                     'tahun' => isset($transaction) ? rawurlencode($transaction['year']) : '',
                     'domain' => isset($transaction) ? rawurlencode(str_replace('.', '', $transaction['domain'])) : '' // Menghapus titik
-                ])) ?>" class="btn btn-secondary">Batal</a>
+                ])) ?>" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>
@@ -83,7 +83,7 @@ Form Transaksi
 
     function fetchCities(provinceId) {
         if (!provinceId) {
-            $cityDropdown.empty().append('<option value="">Pilih Kota</option>');
+            $cityDropdown.empty().append('<option value="">Select Regencies / Cities</option>');
             return;
         }
 
@@ -92,7 +92,7 @@ Form Transaksi
             method: 'GET',
             dataType: 'json',
             success: function(data) {
-                $cityDropdown.empty().append('<option value="">Pilih Kota</option>');
+                $cityDropdown.empty().append('<option value="">Select Regencies / Cities</option>');
                 data.forEach(city => {
                     $cityDropdown.append(`<option value="${city.bps_code}">${city.city_name}</option>`);
                 });

@@ -89,7 +89,7 @@ SDG Data Monitoring
             <div class="card shadow-sm border-0 rounded">
                 <div class="card-header bg-primary text-white">
                     <h5 class="card-title">SDG Performance by Goal</h5>
-                    <p class="card-subtitle text-white-50">A detailed radar chart showcasing SDG performance across all goals.</p>
+                    <!-- <p class="card-subtitle text-white-50">A detailed radar chart showcasing SDG performance across all goals.</p> -->
                 </div>
                 <div style="width: 100%; height: 400px;">
                     <canvas id="sdgGoalsChart"></canvas>

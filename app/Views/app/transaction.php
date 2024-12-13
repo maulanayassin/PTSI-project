@@ -5,40 +5,40 @@ Data Transaksi Provinsi
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<h2 class="text-center mt-4">Data Transaksi</h2>
+<!-- <h2 class="text-center mt-4">Transaction Data</h2> -->
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-primary text-white">
-        <h5 class="m-0">Filter Data</h5>
+        <h5 class="m-0">Data filter</h5>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-md-3 mb-3">
-                <label for="provinsi-dropdown" class="form-label">Pilih Provinsi</label>
+                <label for="provinsi-dropdown" class="form-label">Select Province</label>
                 <select class="form-select" name="provinsi" id="provinsi-dropdown" required>
-                    <option value="">Pilih Provinsi</option>
+                    <option value="">Select Provinsi</option>
                     <?php foreach ($provinsi as $prov): ?>
                         <option value="<?= esc($prov['kemendagri_code']) ?>"><?= esc($prov['province_name']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="col-md-3 mb-3">
-                <label for="kota-dropdown" class="form-label">Pilih Kota</label>
+                <label for="kota-dropdown" class="form-label">Select Regencies / Cities</label>
                 <select class="form-select" name="kota" id="kota-dropdown" required>
-                    <option value="">Pilih Kota</option>
+                    <option value="">Select Regencies / Cities</option>
                 </select>
             </div>
             <div class="col-md-3 mb-3">
-                <label for="tahun-dropdown" class="form-label">Pilih Tahun</label>
+                <label for="tahun-dropdown" class="form-label">Select Year</label>
                 <select class="form-select" name="tahun" id="tahun-dropdown" required>
-                    <option value="">Pilih Tahun</option>
+                    <option value="">Select Year</option>
                     <option value="2019">2019</option>
                     <option value="2020">2020</option>
                 </select>
             </div>
             <div class="col-md-3 mb-3">
-                <label for="domain-dropdown" class="form-label">Pilih Domain</label>
+                <label for="domain-dropdown" class="form-label">Select Domain</label>
                 <select class="form-select" name="domain" id="domain-dropdown" required>
-                    <option value="">Pilih Domain</option>
+                    <option value="">Select Domain</option>
                     <option value="1">Domain 1</option>
                     <option value="2">Domain 2</option>
                     <option value="3.1">Domain 3A</option>
@@ -63,7 +63,9 @@ Data Transaksi Provinsi
                         <path d="M19 16v6"></path></svg>
                 <i class="bi bi-arrow-repeat"></i> Edit
             </button> -->
-             <!-- <a href="<?= site_url('/app/transaction/form/' . (isset($transaction['id']) ? $transaction['id'] : '')) ?>" class="btn btn-success">Create New</a> -->
+            <?php if (session()->get('role') === 'admin'): ?>
+                <a href="<?= site_url('/app/transaction/form/' . (isset($transaction['id']) ? $transaction['id'] : '')) ?>" class="btn btn-success">Create New</a>
+            <?php endif;?>
             <!-- <button id="process-button" class="btn btn-success">
                 <i class="bi bi-plus-circle"></i> Create New
             </button> -->
@@ -77,17 +79,19 @@ Data Transaksi Provinsi
             <table class="table table-bordered table-striped table-hover" id="transaction-table">
                 <thead class="table-dark text-center">
                     <tr>
-                        <th>Nama Indikator</th>
-                        <th>No. Indikator</th>
+                        <th>Indicator Name</th>
+                        <th>No. Indicator</th>
                         <th>Goal</th>
-                        <th>Nilai</th>
+                        <th>Value</th>
                         <th>Growth Rate / Validation</th>
-                        <th>Aksi</th>
+                        <?php if (session()->get('role') === 'admin'): ?>
+                            <th>Action</th>
+                        <?php endif;?>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="6" class="text-center">Silahkan pilih provinsi, kota, dan tahun untuk melihat data.</td>
+                        <td colspan="6" class="text-center">Please select province, city, and year to view data.</td>
                     </tr>
                 </tbody>
             </table>
@@ -134,14 +138,16 @@ Data Transaksi Provinsi
             row.cells[3].classList.add('text-center');
             row.insertCell(4).textContent = transaction.growth_rate !== null ? transaction.growth_rate : '-';
             row.cells[4].classList.add('text-center');
-            let editCell = row.insertCell(5);
-            // console.log(JSON.stringify(transaction));
-            if (transaction.id !== 0) {
-                let editUrl = `${baseUrl}edit/${transaction.id}`;
-                editCell.innerHTML = `<a href="${editUrl}" class="btn btn-sm btn-primary">Edit</a>`;
-            } else {
-                editCell.innerHTML = `<button class="btn btn-sm btn-secondary">Edit</button>`;
-            }
+            <?php if (session()->get('role') === 'admin'): ?>
+                let editCell = row.insertCell(5);
+                // console.log(JSON.stringify(transaction));
+                if (transaction.id !== 0) {
+                    let editUrl = `${baseUrl}edit/${transaction.id}`;
+                    editCell.innerHTML = `<a href="${editUrl}" class="btn btn-sm btn-primary">Edit</a>`;
+                } else {
+                    editCell.innerHTML = `<button class="btn btn-sm btn-secondary">Edit</button>`;
+                }
+            <?php endif;?>
         });
     }
 

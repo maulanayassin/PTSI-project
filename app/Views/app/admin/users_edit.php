@@ -5,7 +5,7 @@ Edit Pengguna
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<h2>Edit Pengguna</h2>
+<h2>Edit User/h2>
 <form action="<?= site_url('/admin/users/update/' . $user['id']) ?>" method="post">
     <?= csrf_field() ?> 
     <div class="card">
@@ -30,7 +30,7 @@ Edit Pengguna
             </div>
         </div>
         <div class="card-footer d-flex justify-content-end">
-            <button type="submit" class="btn btn-pill btn-primary">Simpan</button>
+            <button type="submit" class="btn btn-pill btn-primary">Save</button>
         </div>
     </div>
 </form>

@@ -7,20 +7,20 @@ Kabupaten / Kota
 <?= $this->section('content') ?>
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-center">Tambah / Edit Kabupaten / Kota</h2>
+    <h2 class="mb-4 text-center">Add / Edit Regencies / Cities</h2>
     <form action="<?= site_url('/app/city/submit') ?>" method="post">
         <?= csrf_field() ?>
         <input type="hidden" name="id" id="id" value="<?= ($record_city !== null ? $record_city->id : "") ?>"> 
         
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Form Kabupaten / Kota</h5>
+                <h5 class="mb-0">Regencies / Cities Form</h5>
             </div>
             <div class="card-body">
                 <div class="row">
                     <!-- Nama Kabupaten -->
                     <div class="col-md-6 mb-3">
-                        <label for="city_name" class="form-label">Nama Kabupaten</label>
+                        <label for="city_name" class="form-label">Regencies / Cities Name</label>
                         <input 
                             type="text" 
                             name="city_name" 
@@ -33,9 +33,9 @@ Kabupaten / Kota
                     
                     <!-- Provinsi -->
                     <div class="col-md-6 mb-3">
-                        <label for="prov_id" class="form-label">Provinsi</label>
+                        <label for="prov_id" class="form-label">Province</label>
                         <select name="prov_id" id="prov_id" class="form-select" required>
-                            <option value="">-- Pilih Provinsi --</option>
+                            <option value="">-- Select Province --</option>
                             <?php if (!empty($province)): ?>
                                 <?php foreach ($province as $prov): ?>
                                     <option 
@@ -50,7 +50,7 @@ Kabupaten / Kota
                     
                     <!-- Kode BPS -->
                     <div class="col-md-6 mb-3">
-                        <label for="bps_code" class="form-label">Kode BPS</label>
+                        <label for="bps_code" class="form-label">BPS Code</label>
                         <input 
                             type="text" 
                             name="bps_code" 
@@ -63,7 +63,7 @@ Kabupaten / Kota
                     
                     <!-- Kode Kemendagri -->
                     <div class="col-md-6 mb-3">
-                        <label for="kemendagri_code" class="form-label">Kode Kemendagri</label>
+                        <label for="kemendagri_code" class="form-label">Kemendagri Code</label>
                         <input 
                             type="text" 
                             name="kemendagri_code" 
@@ -77,7 +77,7 @@ Kabupaten / Kota
             </div>
             
             <div class="card-footer d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary px-4">Simpan</button>
+                <button type="submit" class="btn btn-primary px-4">Save</button>
             </div>
         </div> 
     </form>

@@ -9,10 +9,9 @@ Data Processing
     <h1 class="text-center mb-4">Data Processing</h1>
     <div class="card">
         <div class="card-header bg-primary text-white">
-            <h5>Proses Data</h5>
+            <h5>Data Processing</h5>
         </div>
         <div class="card-body">
-            <!-- Feedback Alert Section -->
             <?php if (session()->getFlashdata('success')): ?>
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <?= session()->getFlashdata('success') ?>
@@ -25,48 +24,47 @@ Data Processing
                 </div>
             <?php endif; ?>
 
-            <p class="text-muted mb-4">Pilih domain yang ingin Anda proses dan klik tombol di bawah ini untuk memulai pemrosesan data ke dalam sistem.</p>
+            <p class="text-muted mb-4">Select the domains you want to process and click the button below to start processing the data into the system.</p>
             <form action="<?= site_url('app/dataprocessing/processData') ?>" method="post">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="domains[]" value="domain_1" id="domain1">
-                    <label class="form-check-label" for="domain1">Domain 1 - Mengupdate nilai berdasarkan laju pertumbuhan (growth rate)</label>
+                    <label class="form-check-label" for="domain1">Domain 1 - Update values based on growth rate</label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="domains[]" value="domain_2" id="domain2">
-                    <label class="form-check-label" for="domain2">Domain 2 - Mengupdate nilai dengan validasi verifikasi (TRUE atau FALSE)</label>
+                    <label class="form-check-label" for="domain2">Domain 2 - Update values with verification validation (TRUE or FALSE)</label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="domains[]" value="domain_3A" id="domain3A">
-                    <label class="form-check-label" for="domain3A">Domain 3A - Perhitungan berbasis nilai fix dan validasi</label>
+                    <label class="form-check-label" for="domain3A">Domain 3A - Calculation based on fixed value and validation</label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="domains[]" value="domain_3B" id="domain3B">
-                    <label class="form-check-label" for="domain3B">Domain 3B - Perhitungan berbasis nilai fix dan grouping</label>
+                    <label class="form-check-label" for="domain3B">Domain 3B - Calculation based on fixed value and grouping</label>
                 </div>
                 <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-success btn-lg">Mulai Proses Data</button>
+                    <button type="submit" class="btn btn-success btn-lg">Start Data Processing</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Informasi untuk Pengguna -->
     <div class="card mt-4">
         <div class="card-header bg-info text-white">
-            <h5>Informasi Proses</h5>
+            <h5>Process Information</h5>
         </div>
         <div class="card-body">
             <p>
-                Pemrosesan ini akan memperbarui data dalam berbagai domain yang meliputi Domain 1, Domain 2, Domain 3A, dan Domain 3B.
-                Selain itu, sistem juga akan memperbarui kalkulasi dalam achievement dan grading setelah pemrosesan selesai.
+                This process will update data in various domains including Domain 1, Domain 2, Domain 3A, and Domain 3B.
+                Additionally, the system will also update calculations in achievement and grading after the processing is complete.
             </p>
             <ul>
-                <li><strong>Domain 1:</strong> Mengupdate nilai berdasarkan laju pertumbuhan (growth rate).</li>
-                <li><strong>Domain 2:</strong> Mengupdate nilai dengan mempertahankan validasi verifikasi (TRUE atau FALSE).</li>
-                <li><strong>Domain 3A dan 3B:</strong> Menggunakan perhitungan berbasis nilai fix dan data grouping.</li>
-                <li>Kalkulasi <strong>Achievement</strong> dan <strong>Grading</strong> akan dilakukan setelah pemrosesan selesai.</li>
+                <li><strong>Domain 1:</strong> Update values based on growth rate.</li>
+                <li><strong>Domain 2:</strong> Update values with verification validation (TRUE or FALSE).</li>
+                <li><strong>Domain 3A and 3B:</strong> Use calculations based on fixed value and data grouping.</li>
+                <li><strong>Achievement</strong> and <strong>Grading</strong> calculations will be performed after the processing is complete.</li>
             </ul>
-            <p class="text-muted">Proses ini memerlukan koneksi database yang aktif dan cukup waktu tergantung pada ukuran datanya.</p>
+            <p class="text-muted">This process requires an active database connection and sufficient time depending on the data size.</p>
         </div>
     </div>
 </div>

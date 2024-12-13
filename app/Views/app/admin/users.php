@@ -7,7 +7,7 @@ Daftar Pengguna
 <?= $this->section('content') ?>
 
 <div class="container mt-4">
-    <h2 class="text-center mb-4">Daftar Pengguna</h2>
+    <h2 class="text-center mb-4">User List</h2>
 
     <!-- Search Box -->
     <div class="row mb-4">
@@ -22,7 +22,7 @@ Daftar Pengguna
                     </svg>
                 </span>
                 <!-- Input untuk Pencarian -->
-                <input type="text" class="form-control" id="searchUser" placeholder="Cari pengguna...">
+                <input type="text" class="form-control" id="searchUser" placeholder="Search users...">
             </div>
         </div>
     </div>
@@ -30,10 +30,10 @@ Daftar Pengguna
     <!-- Card untuk Daftar Pengguna -->
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Data Pengguna</h5>
+            <h5 class="mb-0">User Data</h5>
             <!-- Tombol Tambah Pengguna Selalu Ada -->
             <a href="<?= site_url('/admin/users/create') ?>" class="btn btn-light btn-sm">
-                <i class="bi bi-plus-circle"></i> Tambah Pengguna
+                <i class="bi bi-plus-circle"></i> Create User
             </a>
         </div>
         <div class="card-body">
@@ -45,13 +45,13 @@ Daftar Pengguna
                             <th>Username</th>
                             <th>Email</th>
                             <th>Role</th>
-                            <th class="text-center">Aksi</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
                         <?php if (empty($users)): ?>
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Tidak ada data pengguna</td>
+                                <td colspan="5" class="text-center text-muted">No user data</td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($users as $user): ?>
@@ -73,7 +73,7 @@ Daftar Pengguna
                                               class="d-inline-block">
                                             <?= csrf_field() ?>
                                             <button type="submit" class="btn btn-sm btn-danger">
-                                                <i class="bi bi-trash"></i> Hapus
+                                                <i class="bi bi-trash"></i> Delete
                                             </button>
                                         </form>
                                     </td>

@@ -7,7 +7,7 @@ Kabupaten / Kota
 <?= $this->section('content') ?>
 
 <div class="container mt-4">
-    <h2 class="text-center mb-4">Daftar Kabupaten / Kota</h2>
+    <h2 class="text-center mb-4">List of Regencies / Cities</h2>
 
     <div class="row mb-4">
         <div class="col-md-6 offset-md-3 mb-3">
@@ -21,7 +21,7 @@ Kabupaten / Kota
                     </svg>
                 </span>
                 <!-- Input Field -->
-                <input type="text" class="form-control" id="search-kabupaten" placeholder="Cari kabupaten/kota anda">
+                <input type="text" class="form-control" id="search-kabupaten" placeholder="Search Regencies / Cities">
             </div>
         </div>
     </div>
@@ -29,10 +29,10 @@ Kabupaten / Kota
 
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Data Kabupaten / Kota</h5>
+            <h5 class="mb-0">Regencies / Cities Data</h5>
             <?php if (session()->get('role') === 'admin'): ?>
                 <a href="<?= site_url('/app/city/form') ?>" class="btn btn-light btn-sm">
-                    <i class="bi bi-plus-circle"></i> Tambah
+                    <i class="bi bi-plus-circle"></i> Add
                 </a>
             <?php endif; ?>
         </div>
@@ -42,12 +42,12 @@ Kabupaten / Kota
                     <thead class="table-dark text-center">
                         <tr>
                             <th>ID</th>
-                            <th>Nama Kab / Kota</th>
-                            <th>Provinsi</th>
-                            <th>Kode BPS</th>
-                            <th>Kode Kemendagri</th>
+                            <th>Regencies / Cities Name</th>
+                            <th>Province</th>
+                            <th>BPS Code</th>
+                            <th>Kemendagri Code</th>
                             <?php if (session()->get('role') === 'admin'): ?>
-                                <th class="text-center">Aksi</th>
+                                <th class="text-center">Action</th>
                             <?php endif; ?>
                         </tr>
                     </thead>
@@ -76,7 +76,7 @@ Kabupaten / Kota
                                                   class="d-inline-block">
                                                 <?= csrf_field() ?>
                                                 <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
+                                                    <i class="bi bi-trash"></i> Delete
                                                 </button>
                                             </form>
                                         </td>

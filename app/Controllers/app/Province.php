@@ -56,7 +56,7 @@ class Province extends Controller{
         }
         return redirect()->to('/app/province');
     }
-     public function edit($id = null)
+    public function edit($id = null)
     {
         // Tampilkan form tambah atau edit 
         $db = \Config\Database::connect();

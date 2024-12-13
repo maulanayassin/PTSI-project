@@ -5,7 +5,7 @@ Tambah Pengguna
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<h2>Tambah Pengguna</h2>
+<h2>Create User</h2>
 <form action="<?= site_url('/admin/users/submit') ?>" method="post">
 <?= csrf_field() ?> 
 <div class="card">
@@ -43,7 +43,7 @@ Tambah Pengguna
         </div>
     </div>
     <div class="card-footer d-flex justify-content-end">
-        <button type="submit" class="btn btn-pill btn-primary">Simpan</button>
+        <button type="submit" class="btn btn-pill btn-primary">Save</button>
     </div>
 </div>
 </form>

@@ -7,14 +7,14 @@ Provinsi
 <?= $this->section('content') ?>
 
 <div class="container mt-4">
-    <h2 class="text-center mb-4">Daftar Provinsi</h2>
+    <h2 class="text-center mb-4">List of Provinces</h2>
 
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Data Provinsi</h5>
+            <h5 class="mb-0">Province Data</h5>
             <?php if (session()->get('role') === 'admin'): ?>
                 <a href="<?= site_url('/app/province/form') ?>" class="btn btn-light btn-sm">
-                    <i class="bi bi-plus-circle"></i> Tambah
+                    <i class="bi bi-plus-circle"></i> Add
                 </a>
             <?php endif; ?>
         </div>
@@ -24,11 +24,11 @@ Provinsi
                     <thead class="table-dark text-center">
                         <tr>
                             <th>ID</th>
-                            <th>Nama Provinsi</th>
-                            <th>Kode BPS</th>
-                            <th>Kode Kemendagri</th>
+                            <th>Province Name</th>
+                            <th>BPS Code</th>
+                            <th>Kemendagri Code</th>
                             <?php if (session()->get('role') === 'admin'): ?>
-                                <th class="text-center">Aksi</th>
+                                <th class="text-center">Action</th>
                             <?php endif; ?>
                         </tr>
                     </thead>
@@ -56,7 +56,7 @@ Provinsi
                                                   class="d-inline-block">
                                                 <?= csrf_field() ?>
                                                 <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash"></i> Hapus
+                                                    <i class="bi bi-trash"></i> Delete
                                                 </button>
                                             </form>
                                         </td>

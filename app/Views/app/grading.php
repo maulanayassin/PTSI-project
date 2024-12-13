@@ -15,9 +15,9 @@ Detail SDG Data - <?= $selectedCity ?? 'Kota/Kabupaten' ?>
         <div class="col-md-3 mb-4">
             <div class="card shadow-lg border-0">
                 <div class="card-body text-center">
-                    <h2 class="text-muted fw-bold">PERINGKAT KOTA</h2>
+                    <h2 class="text-muted fw-bold">City Ranking</h2>
                     <div class="text-primary display-5 fw-bold"><?= $query_rank ?? 0 ?></div>
-                    <span class="text-muted fs-6">dari <?= $sdgDataCount ?? 0 ?> Kota</span>
+                    <span class="text-muted fs-6">of <?= $sdgDataCount ?? 0 ?> City</span>
                 </div>
             </div>
         </div>
@@ -26,7 +26,7 @@ Detail SDG Data - <?= $selectedCity ?? 'Kota/Kabupaten' ?>
         <div class="col-md-3 mb-4">
             <div class="card shadow-lg border-0">
                 <div class="card-body text-center">
-                    <h2 class="text-muted fw-bold">INDEKS SKOR SDG</h2>
+                    <h2 class="text-muted fw-bold">SDG Index Score</h2>
                     <div class="position-relative d-inline-block">
                         <!-- SVG Progress Circle -->
                         <svg width="120" height="120" class="mb-2">
@@ -39,7 +39,7 @@ Detail SDG Data - <?= $selectedCity ?? 'Kota/Kabupaten' ?>
                         <!-- Score in the Center -->
                         <div class="position-absolute top-50 start-50 translate-middle">
                             <h3 class="fw-bold text-primary m-0"><?= $query_score ?? 0 ?></h3>
-                            <small class="text-muted">dari 100</small>
+                            <small class="text-muted">of 100</small>
                         </div>
                     </div>
                 </div>
@@ -51,9 +51,9 @@ Detail SDG Data - <?= $selectedCity ?? 'Kota/Kabupaten' ?>
                     <!-- Bagian Nama Kota & Provinsi -->
                     <div class="col-md-8 text-justify">
                         <h4 class="text-primary mb-2 city-title">
-                            <strong><?= $selectedCity ?? 'Kota/Kabupaten' ?></strong> merupakan salah satu kota yang berada di peringkat 
+                            <strong><?= $selectedCity ?? 'Kota/Kabupaten' ?></strong> is one of the cities that is ranked
                             <span class="text-success"><?= $queryRankByProvince ?? 0 ?></span>
-                            di provinsi <strong><?= $selectedProvince ?? 'provinsi' ?></strong>
+                            in <strong><?= $selectedProvince ?? 'provinsi' ?></strong>
                         </h4>
                     </div>
                     <!-- Bagian Logo Provinsi -->
@@ -73,7 +73,7 @@ Detail SDG Data - <?= $selectedCity ?? 'Kota/Kabupaten' ?>
         <div class="col-md-8 mb-4">
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-primary text-white text-center">
-                    <h5 class="m-0">Visualisasi Goal Data SDG <?= $selectedCity ?? 'Kota/Kabupaten' ?></h5>
+                    <h5 class="m-0">SDG Data Goal Visualization<?= $selectedCity ?? 'Kota/Kabupaten' ?></h5>
                 </div>
                 <div class="card-body text-center">
                     <div class="chart-container" style="position: relative; height: 350px; width: 100%; margin: auto;">
@@ -87,11 +87,11 @@ Detail SDG Data - <?= $selectedCity ?? 'Kota/Kabupaten' ?>
         <div class="col-md-4 mb-4">
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-danger text-white text-center">
-                    <h5 class="m-0">Goal SDG yang Memerlukan Perbaikan</h5>
+                    <h5 class="m-0">SDG Goals that Need Improvement</h5>
                 </div>
                 <div class="card-body">
                     <p class="text-muted">
-                        Berikut adalah goal SDG yang memiliki skor < 50 dan memerlukan perhatian khusus.
+                        The following are SDG goals that have a score < 50 and require special attention.
                     </p>
                     <ul class="text-danger">
                         <?php 
@@ -104,12 +104,12 @@ Detail SDG Data - <?= $selectedCity ?? 'Kota/Kabupaten' ?>
                                 <li class="d-flex align-items-center mb-2">
                                     <img src="<?= getGoalImage($data['goal']) ?>" alt="Goal <?= $data['goal'] ?>" 
                                         class="img-thumbnail" style="max-height: 40px; margin-right: 10px;">
-                                    Goal <?= $data['goal'] ?> dengan score  
-                                    <?= $data['score'] ?> Perlu <?= getGoalDescription($data['goal']) ?>
+                                    Goal <?= $data['goal'] ?> with score <?= $data['score'] ?> 
+                                    Need <?= getGoalDescription($data['goal']) ?>
                                 </li>
                             <?php endforeach; 
                         else: ?>
-                            <li>Tidak ada goal yang memerlukan perhatian ekstra.</li>
+                            <li>There are no goals that require extra attention.</li>
                         <?php endif; ?>
                     </ul>
                 </div>
@@ -122,7 +122,7 @@ Detail SDG Data - <?= $selectedCity ?? 'Kota/Kabupaten' ?>
         <div class="col-12">
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-primary text-white text-center">
-                    <h5 class="m-0">Data SDG Tabel Lengkap</h5>
+                    <h5 class="m-0">Complete SDG Data Table</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -130,8 +130,8 @@ Detail SDG Data - <?= $selectedCity ?? 'Kota/Kabupaten' ?>
                             <thead class="table-dark text-center">
                                 <tr>
                                     <th>Goal</th>
-                                    <th>Keterangan Goal</th>
-                                    <th>Skor</th>
+                                    <th>Goal Description</th>
+                                    <th>Score</th>
                                     <th>Rating</th>
                                 </tr>
                             </thead>
@@ -171,25 +171,25 @@ Detail SDG Data - <?= $selectedCity ?? 'Kota/Kabupaten' ?>
         <?php
         function getGoalDescription($goal) {
             $descriptions = [
-                1 => 'menghapus kemiskinan di segala bentuknya.',
-                2 => 'mengakhiri kelaparan dan meningkatkan ketahanan pangan.',
-                3 => 'mendukung kesehatan yang baik dan kesejahteraan.',
-                4 => 'memastikan pendidikan berkualitas yang inklusif.',
-                5 => 'mencapai kesetaraan gender dan pemberdayaan perempuan.',
-                6 => 'menjamin akses terhadap air bersih dan sanitasi.',
-                7 => 'meningkatkan akses energi bersih dan terjangkau.',
-                8 => 'mendukung pekerjaan layak dan pertumbuhan ekonomi.',
-                9 => 'meningkatkan infrastruktur, inovasi, dan industrialisasi.',
-                10 => 'mengurangi ketimpangan di dalam dan antar negara.',
-                11 => 'menciptakan kota dan komunitas berkelanjutan.',
-                12 => 'meningkatkan pola konsumsi dan produksi yang bertanggung jawab.',
-                13 => 'mengatasi perubahan iklim dan dampaknya.',
-                14 => 'melindungi dan melestarikan ekosistem laut.',
-                15 => 'melindungi ekosistem darat dan keanekaragaman hayati.',
-                16 => 'mendukung perdamaian, keadilan, dan kelembagaan yang kuat.',
-                17 => 'membangun kemitraan global untuk mencapai tujuan SDG.',
+                1 => 'end poverty in all its forms.',
+                2 => 'end hunger and promote food security.',
+                3 => 'promote good health and well-being.',
+                4 => 'ensure inclusive and quality education.',
+                5 => 'achieve gender equality and empower women.',
+                6 => 'ensure access to clean water and sanitation.',
+                7 => 'increase access to affordable and clean energy.',
+                8 => 'support decent work and economic growth.',
+                9 => 'improve infrastructure, innovation and industrialization.',
+                10 => 'reduce inequalities within and among countries.',
+                11 => 'create sustainable cities and communities.',
+                12 => 'promote responsible consumption and production patterns.',
+                13 => 'address climate change and its impacts.',
+                14 => 'protect and conserve marine ecosystems.',
+                15 => 'protect terrestrial ecosystems and biodiversity.',
+                16 => 'support peace, justice and strong institutions.',
+                17 => 'build a global partnership to achieve the SDGs.',
             ];
-            return $descriptions[$goal] ?? 'Deskripsi tidak tersedia.';
+            return $descriptions[$goal] ?? 'Description not available.';
         }
         function getGoalImage($goal) {
             $goalImages = [

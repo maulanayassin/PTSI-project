@@ -7,31 +7,30 @@ Peringkat
 <?= $this->section('content') ?>
 <div class="container mt-4">
     <!-- Judul -->
-    <h2 class="text-center mb-4">Peringkat Kabupaten/Kota</h2>
-
+    <!-- <h2 class="text-center mb-4">Peringkat Kabupaten/Kota</h2> -->
     <!-- Filter Data -->
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-primary text-white">
-            <h5 class="m-0">Filter Data</h5>
+            <h5 class="m-0">Data Filter</h5>
         </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label for="search-kabupaten" class="form-label">Cari Kabupaten/Kota</label>
-                    <input type="text" class="form-control" id="search-kabupaten" placeholder="Cari kabupaten/kota anda">
+                    <label for="search-kabupaten" class="form-label">Search Regencies / Cities</label>
+                    <input type="text" class="form-control" id="search-kabupaten" placeholder="Search Regencies / Cities">
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="region-dropdown" class="form-label">Wilayah Administratif</label>
+                    <label for="region-dropdown" class="form-label">Administrative Area</label>
                     <select class="form-select" id="region-dropdown" name="region-dropdown">
-                        <option value="" selected>Wilayah Administratif</option>
-                        <option value="Kabupaten">Kabupaten</option>
-                        <option value="Kota">Kota</option>
+                        <option value="" selected>Administrative Area</option>
+                        <option value="Kabupaten">Regencies</option>
+                        <option value="Kota">Cities</option>
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label for="year-dropdown" class="form-label">Tahun</label>
+                    <label for="year-dropdown" class="form-label">Year</label>
                     <select class="form-select" id="year-dropdown" name="year-dropdown">
-                        <option value="" selected>Tahun</option>
+                        <option value="" selected>Year</option>
                         <option value="2019">2019</option>
                         <option value="2020">2020</option>
                         <option value="2021">2021</option>
@@ -48,13 +47,13 @@ Peringkat
                 <table class="table table-bordered table-striped table-hover">
                     <thead class="table-dark text-center">
                         <tr>
-                            <th>Peringkat</th>
-                            <th>Kabupaten/Kota</th>
-                            <th>Wilayah</th>
-                            <th>Tahun</th>
-                            <th>Skor</th>
+                            <th>Ranking</th>
+                            <th>Regencies / Cities</th>
+                            <th>Region</th>
+                            <th>Year</th>
+                            <th>Score</th>
                             <th>Rating</th>
-                            <th>Aksi</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
