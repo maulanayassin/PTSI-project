@@ -73,7 +73,7 @@ Detail SDG Data - <?= $selectedCity ?? 'Kota/Kabupaten' ?>
         <div class="col-md-8 mb-4">
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-primary text-white text-center">
-                    <h5 class="m-0">SDG Data Goal Visualization<?= $selectedCity ?? 'Kota/Kabupaten' ?></h5>
+                    <h5 class="m-0">SDG Data Goal Visualization <?= $selectedCity ?? 'Kota/Kabupaten' ?></h5>
                 </div>
                 <div class="card-body text-center">
                     <div class="chart-container" style="position: relative; height: 350px; width: 100%; margin: auto;">

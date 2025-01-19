@@ -23,30 +23,20 @@ class Home extends Controller
         $chartType = $this->request->getVar('chartType'); // This will define which chart filter is applied
 
         // Filter data berdasarkan region untuk masing-masing chart
-        if ($region) {
-            if ($chartType === 'top10') {
-                $achievementData = array_filter($achievementData, function ($achievement) use ($region) {
-                    return $achievement['region'] === $region;
-                });
-            } elseif ($chartType === 'distribution') {
-                $achievementData = array_filter($achievementData, function ($achievement) use ($region) {
-                    return $achievement['region'] === $region;
-                });
-            } elseif ($chartType === 'sdg') {
-                $achievementData = array_filter($achievementData, function ($achievement) use ($region) {
-                    return $achievement['region'] === $region;
-                });
-            }
+       if ($region) {
+            $achievementData = array_filter($achievementData, function ($achievement) use ($region) {
+                return $achievement['region'] === $region;
+            });
         }
 
-        // Filter and sort Top 10 cities by rating
+        // Sort dan ambil Top 10 dari data terfilter
         usort($achievementData, function ($a, $b) {
             return $b['rating'] <=> $a['rating'];
         });
 
         $topAchievements = array_slice($achievementData, 0, 10);
 
-        // Prepare data for Top 10 chart
+        // Data untuk grafik
         $cityNames = array_column($topAchievements, 'city_name');
         $ratings = array_column($topAchievements, 'rating');
 

@@ -23,7 +23,7 @@ SDG Data Monitoring
                             <img src="dist/img/download.jpeg" 
                                  alt="SDG Logo" 
                                  class="img-fluid mb-3" 
-                                 style="max-width: 150px;">
+                                 style="max-width: 130px;">
                         </div>
                         <div class="col-md-9">
                             <p class="text-muted mb-3" style="text-align: justify;">
@@ -41,58 +41,60 @@ SDG Data Monitoring
 
     <!-- Visualisasi Utama -->
     <div class="row g-4 mb-4">
-        <!-- Top 10 Cities by SDG Performance -->
-        <div class="col-md-6">
+        <!-- SDG Performance Charts -->
+        <div class="col-md-12">
             <div class="card shadow-sm border-0 rounded h-100">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="card-title m-0">Top 10 Cities by SDG Performance</h5>
-                    </div>
-                    <!-- Region Filter for Top 10 Cities -->
-                    <select class="form-select" style="max-width: 150px;" id="region-dropdown-top10" name="region-dropdown">
-                        <option value="" selected>Wilayah</option>
-                        <option value="Kabupaten">Kabupaten</option>
-                        <option value="Kota">Kota</option>
+                    <h5 class="card-title m-0">SDG Performance by City</h5>
+                    <!-- Single Dropdown Filter -->
+                    <select class="form-select" style="max-width: 150px;" id="region-dropdown">
+                        <option value="" selected>Region</option>
+                        <option value="Kabupaten">Regencies</option>
+                        <option value="Kota">Cities</option>
                     </select>
                 </div>
                 <div class="card-body">
-                    <canvas id="cityPerformanceChart" height="300"></canvas>
-                </div>
-            </div>
-        </div>
+                   <div class="row">
+                        <!-- Top 10 Cities by SDG Performance -->
+                        <div class="col-md-6 mb-3">
+                            <div class="card shadow-sm border-0 rounded">
+                                <!-- <div class="card-header bg-success text-white">
+                                    <h5 class="card-title m-0">Top 10 Cities by SDG Performance</h5>
+                                </div> -->
+                                <div class="card-body p-3">
+                                    <canvas id="cityPerformanceChart" height="220"></canvas>
+                                </div>
+                            </div>
+                        </div>
 
-        <!-- City SDG Performance Distribution -->
-        <div class="col-md-6">
-            <div class="card shadow-sm border-0 rounded h-100">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="card-title m-0">City SDG Performance Distribution</h5>
+                        <!-- City SDG Performance Distribution -->
+                        <div class="col-md-6 mb-3">
+                            <div class="card shadow-sm border-0 rounded">
+                                <!-- <div class="card-header bg-success text-white">
+                                    <h5 class="card-title m-0">City SDG Performance Distribution</h5>
+                                </div> -->
+                                <div class="card-body p-3">
+                                    <canvas id="performanceDistributionChart" height="220"></canvas>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <!-- Region Filter for Performance Distribution -->
-                    <select class="form-select" style="max-width: 150px;" id="region-dropdown-distribution" name="region-dropdown">
-                        <option value="" selected>Wilayah</option>
-                        <option value="Kabupaten">Kabupaten</option>
-                        <option value="Kota">Kota</option>
-                    </select>
-                </div>
-                <div class="card-body">
-                    <canvas id="performanceDistributionChart" height="300"></canvas>
                 </div>
             </div>
         </div>
-
     </div>
+
 
     <!-- SDG Performance by Goal Chart -->
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="card shadow-sm border-0 rounded">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="card-title">SDG Performance by Goal</h5>
-                    <!-- <p class="card-subtitle text-white-50">A detailed radar chart showcasing SDG performance across all goals.</p> -->
+                    <h5 class="card-title m-0">SDG Performance by Goal</h5>
                 </div>
-                <div style="width: 100%; height: 400px;">
-                    <canvas id="sdgGoalsChart"></canvas>
+                <div class="card-body d-flex justify-content-center align-items-center" style="height: 400px;">
+                    <!-- Centering the canvas using flexbox -->
+                    <canvas id="sdgGoalsChart" style="max-width: 100%; max-height: 100%;"></canvas>
                 </div>
             </div>
         </div>
@@ -101,80 +103,82 @@ SDG Data Monitoring
 
 <!-- Include JavaScript Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
-<link href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
 <script>
-    // Event Listener for Region Filters
-    document.getElementById('region-dropdown-top10').addEventListener('change', function() {
-        applyRegionFilter('top10');
+    const cityNames = <?= json_encode($cityNames ?? []) ?>;
+    const ratings = <?= json_encode($ratings ?? []) ?>;
+    const goalLabels = <?= json_encode(array_keys($goalRatings ?? [])) ?>;
+    const goalRatings = <?= json_encode(array_values($goalRatings ?? [])) ?>;
+
+    document.getElementById('region-dropdown').addEventListener('change', function() {
+        applyRegionFilter();
     });
 
-    document.getElementById('region-dropdown-distribution').addEventListener('change', function() {
-        applyRegionFilter('distribution');
-    });
+    function applyRegionFilter() {
+        const selectedRegion = document.getElementById('region-dropdown').value;
 
-    function applyRegionFilter(chartType) {
-        const selectedRegionTop10 = document.getElementById('region-dropdown-top10').value;
-        const selectedRegionDistribution = document.getElementById('region-dropdown-distribution').value;
-
-        let selectedRegion = chartType === 'top10' ? selectedRegionTop10 : selectedRegionDistribution;
+        if (!selectedRegion) return;
 
         const url = new URL(window.location.href);
-        url.searchParams.set('region', selectedRegion); // Update the region parameter in the URL
+        url.searchParams.set('region', selectedRegion);
 
-        window.location.href = url.toString(); // Reload the page with the new region filter
+        window.location.href = url.toString();
     }
 
-    // Top 5 Cities by SDG Performance (Bar Chart)
-    var ctx1 = document.getElementById('cityPerformanceChart').getContext('2d');
-    var cityPerformanceChart = new Chart(ctx1, {
+    // City Performance Chart (Bar Chart)
+    new Chart(document.getElementById('cityPerformanceChart'), {
         type: 'bar',
         data: {
-            labels: <?= json_encode($cityNames) ?>, // Nama kota
+            labels: cityNames || ['No Data'],
             datasets: [{
                 label: 'City Performance Rating',
-                data: <?= json_encode($ratings) ?>,
-                backgroundColor: ['#4CAF50', '#8BC34A', '#FFEB3B', '#FFC107', '#F44336'],
-                borderColor: '#333',
-                borderWidth: 1
+                data: ratings || [0],
+                backgroundColor: ratings.map(rating => {
+                    if (rating >= 80) return '#4CAF50'; // Light Green
+                    if (rating >= 70) return '#8BC34A'; // Light Blue
+                    if (rating >= 60) return '#FFEB3B'; // Orange
+                    if (rating >= 50) return '#FFC107'; // Yellow
+                    return '#F44336'; // Red
+                }),
+                borderColor: '#fff', // Border color for bars
+                borderWidth: 2
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: false, // Allows resizing based on the container
             scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Performance Score'
-                    }
+                y: { 
+                    beginAtZero: true, 
+                    ticks: { 
+                        precision: 0,
+                        stepSize: 10 
+                    } 
                 },
                 x: {
                     title: {
                         display: true,
-                        text: 'City Names'
+                        text: 'Cities',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
                     }
                 }
             },
             plugins: {
-                legend: {
-                    position: 'top',
-                },
                 tooltip: {
-                    enabled: true
-                },
-                title: {
-                    display: true,
-                    text: 'City Performance Chart'
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return `Rating: ${tooltipItem.raw}%`;
+                        }
+                    }
                 }
             }
         }
     });
 
-    // Performance Distribution (Pie Chart)
+    // Performance Distribution Chart (Pie Chart)
     var ctx2 = document.getElementById('performanceDistributionChart').getContext('2d');
     var performanceDistributionChart = new Chart(ctx2, {
         type: 'pie',
@@ -182,11 +186,11 @@ SDG Data Monitoring
             labels: ['Revolutioner', 'Innovator', 'Advocator', 'Encourager', 'Exciter'],
             datasets: [{
                 data: [
-                    <?= count(array_filter($ratings, function($rating) { return $rating >= 80 && $rating < 100; })) ?>, 
-                    <?= count(array_filter($ratings, function($rating) { return $rating >= 70 && $rating < 80; })) ?>,
-                    <?= count(array_filter($ratings, function($rating) { return $rating >= 60 && $rating < 70; })) ?>,
-                    <?= count(array_filter($ratings, function($rating) { return $rating >= 50 && $rating < 60; })) ?>,
-                    <?= count(array_filter($ratings, function($rating) { return $rating < 50; })) ?>
+                    ratings.filter(r => r >= 80 && r < 100).length, // 80-100
+                    ratings.filter(r => r >= 70 && r < 80).length, // 70-79
+                    ratings.filter(r => r >= 60 && r < 70).length, // 60-69
+                    ratings.filter(r => r >= 50 && r < 60).length, // 50-59
+                    ratings.filter(r => r < 50).length // <50
                 ],
                 backgroundColor: ['#4CAF50', '#8BC34A', '#FFEB3B', '#FFC107', '#F44336'],
                 borderColor: '#fff',
@@ -198,54 +202,36 @@ SDG Data Monitoring
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'right',
+                    position: 'right', // Position of the legend
                     labels: {
-                        boxWidth: 10,
+                        boxWidth: 10, // Smaller legend box width
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            let label = tooltipItem.label;
+                            let value = tooltipItem.raw;
+                            return `${label}: ${value} Cities`;
+                        }
                     }
                 }
             }
         }
     });
 
-    // SDG Performance by Goal (Radar Chart)
-    var ctx3 = document.getElementById('sdgGoalsChart').getContext('2d');
-    var sdgGoalsChart = new Chart(ctx3, {
+
+
+    new Chart(document.getElementById('sdgGoalsChart'), {
         type: 'radar',
         data: {
-            labels: <?= json_encode($goalLabels) ?>,
-            datasets: [{
-                label: 'Average Performance (%)',
-                data: <?= json_encode($goalRatings) ?>,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: '#36A2EB',
-                pointBackgroundColor: '#36A2EB',
-                pointHoverBackgroundColor: '#FF5733',
-                pointRadius: 4,
-                borderWidth: 2,
-            }]
+            labels: goalLabels || ['No Data'],
+            datasets: [{ label: 'Average Performance (%)', data: goalRatings || [0], backgroundColor: 'rgba(75, 192, 192, 0.2)', borderColor: '#36A2EB' }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                r: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 10,
-                        suggestedMin: 0,
-                        suggestedMax: 100
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'top'
-                },
-                tooltip: {
-                    enabled: true
-                }
-            }
-        }
+        options: { responsive: true }
     });
 </script>
 
